@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: booknest-etl
+
+  profiles:
+    active: docker
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:booknest-rabbitmq}
+    port: ${SPRING_RABBITMQ_PORT:5673}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+
+  datasource:
+    url: jdbc:mysql://${SOURCE_DB_HOST:mysql-source}:3306/source_db
+    username: ${SOURCE_DB_USERNAME:root}
+    password: ${SOURCE_DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+staging:
+  datasource:
+    url: jdbc:mysql://${STAGING_DB_HOST:mysql-source}:3306/staging_db
+    username: ${STAGING_DB_USERNAME:root}
+    password: ${STAGING_DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+etl:
+  exchange: ${ETL_EXCHANGE:etl.exchange}
+  queues:
+    raw: ${ETL_QUEUE_RAW:etl.raw}
+    quality: ${ETL_QUEUE_QUALITY:etl.quality}
+    error: ${ETL_QUEUE_ERROR:etl.errors}
+  extract:
+    csv-location: classpath:data/source/*.csv
+    schedule-fixed-delay: ${ETL_EXTRACT_DELAY:300000} # 5 minutes default
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

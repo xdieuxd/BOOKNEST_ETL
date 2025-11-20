@@ -1,0 +1,4 @@
+order_id,customer_name,customer_email,status,payment_method,total_amount,discount,shipping_fee,book_codes,created_at
+CSV_ORDER_1001,Pham Thanh,thanh@example.com,DA_THANH_TOAN,ONLINE,285000,15000,30000,"CSV_BOOK_001|CSV_BOOK_002",2024-07-21T10:15:00
+CSV_ORDER_1002,Doan Bich,bich@example.com,CHO_THANH_TOAN,COD,120000,0,25000,"CSV_BOOK_003",2024-07-22T08:40:00
+CSV_ORDER_1003,Tran Han,han@example.com,DA_HUY,ONLINE,95000,0,0,"CSV_BOOK_001",2024-07-23T13:05:00

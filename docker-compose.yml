@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  booknest-etl-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: booknest-etl/app:latest
+    container_name: booknest-etl-app
+    depends_on:
+      booknest-rabbitmq:
+        condition: service_healthy
+      mysql-source:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_RABBITMQ_HOST: booknest-rabbitmq
+      SPRING_RABBITMQ_PORT: 5673
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-source:3306/staging_db
+      SPRING_DATASOURCE_USERNAME: xuandieu
+      SPRING_DATASOURCE_PASSWORD: xuandieu1905
+      SOURCE_DB_URL: jdbc:mysql://mysql-source:3306/source_db
+      SOURCE_DB_USERNAME: xuandieu
+      SOURCE_DB_PASSWORD: xuandieu1905
+    ports:
+      - "8080:8080"
+    restart: on-failure
+
+  booknest-rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: booknest-rabbitmq
+    hostname: booknest-rabbitmq
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  mysql-source:
+    image: mysql:8.0
+    container_name: mysql-source
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: source_db
+    ports:
+      - "3310:3306"
+    volumes:
+      - mysql_source_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mysql_source_data:

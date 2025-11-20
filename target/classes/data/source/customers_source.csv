@@ -1,0 +1,4 @@
+customer_id,full_name,email,phone,status,roles,created_at
+CSV_CUS_001,Nguyen Quang Huy,huy@example.com,0909111222,ACTIVE,"THANH_VIEN",2024-07-15T09:00:00
+CSV_CUS_002,Pham Thi Mai,mai@example.com,0909333444,ACTIVE,"THANH_VIEN|VIP",2024-07-18T14:25:00
+CSV_CUS_003,Le Manh Linh,linh@example.com,0909555666,LOCKED,"THANH_VIEN",2024-07-19T16:50:00

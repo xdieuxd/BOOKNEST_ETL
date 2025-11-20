@@ -1,0 +1,4 @@
+book_id,title,authors,categories,price,released_at,free_flag,description
+CSV_BOOK_001,Toi thay hoa vang tren co xanh,Nguyen Nhat Anh,Thieu nhi,95000,2012-07-20,false,"Nguoi ke chuyen bang giong dieu trong veo ve tuoi tho o Phu Yen"
+CSV_BOOK_002,Chang hiem doi tren may,Hoang Anh Tuan,Phieu luu,135000,2019-04-12,false,"Chuyen du ngoan kham pha nhung ngon nui phia Bac Viet Nam"
+CSV_BOOK_003,Nhung giac mo ban dem,Le Minh Chau,Tieu thuyet,0,2020-11-05,true,"Tuyen tap sach dien tu phat hanh mien phi phuc vu doc gia online"
