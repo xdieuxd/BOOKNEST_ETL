@@ -1,0 +1,6 @@
+target/
+dashboard-ui/node_modules/
+node_modules/
+.mvn/
+.idea/
+*.log
