@@ -193,6 +193,7 @@ public class DataQualityService {
                 .addRule(new RegexRule<>("phone", "Số điện thoại phải gồm 9-15 chữ số", PHONE_PATTERN, UserRawMessage::getPhone))
                 .addRule(new MaxLengthRule<>("phone", 20, "Số điện thoại tối đa 20 ký tự", UserRawMessage::getPhone))
                 .addRule(new CollectionMinSizeRule<>("roles", 1, "Phải có ít nhất 1 vai trò", UserRawMessage::getRoles))
+                .addRule(new NotBlankRule<>("status", "Trạng thái không được trống", UserRawMessage::getStatus))
                 .addRule(new StringSetRule<>("status", Set.of("HOAT_DONG", "KHOA"), "Trạng thái không hợp lệ", UserRawMessage::getStatus));
     }
 

@@ -4,13 +4,14 @@ import java.sql.Types;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Repository
 public class EtlLogRepository {
 
     private final JdbcTemplate stagingJdbcTemplate;
 
-    public EtlLogRepository(JdbcTemplate stagingJdbcTemplate) {
+    public EtlLogRepository(@Qualifier("stagingJdbcTemplate") JdbcTemplate stagingJdbcTemplate) {
         this.stagingJdbcTemplate = stagingJdbcTemplate;
     }
 

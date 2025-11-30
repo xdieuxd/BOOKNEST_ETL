@@ -4,6 +4,7 @@ import java.sql.Types;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.booknest.etl.dto.InvoiceRawMessage;
 import com.booknest.etl.dq.DataQualityStatus;
@@ -13,13 +14,13 @@ public class StagingInvoiceRepository {
 
     private final JdbcTemplate stagingJdbcTemplate;
 
-    public StagingInvoiceRepository(JdbcTemplate stagingJdbcTemplate) {
+    public StagingInvoiceRepository(@Qualifier("stagingJdbcTemplate") JdbcTemplate stagingJdbcTemplate) {
         this.stagingJdbcTemplate = stagingJdbcTemplate;
     }
 
     public void upsert(InvoiceRawMessage invoice, DataQualityStatus status, String errors) {
         String sql = """
-                INSERT INTO stg_invoices (invoice_key, order_key, amount, status, created_at, quality_status, quality_errors, loaded_at)
+                INSERT INTO staging_db.stg_invoices (invoice_key, order_key, amount, status, created_at, quality_status, quality_errors, loaded_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
                 ON DUPLICATE KEY UPDATE
                     order_key = VALUES(order_key),

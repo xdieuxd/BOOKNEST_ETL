@@ -1,12 +1,16 @@
 package com.booknest.etl.service.load;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.amqp.core.Message;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.booknest.etl.dto.BookRawMessage;
 import com.booknest.etl.dto.CartRawMessage;
 import com.booknest.etl.dto.InvoiceRawMessage;
@@ -39,11 +43,28 @@ public class StagingLoaderService {
     private final StagingCartItemRepository stagingCartItemRepository;
     private final StagingInvoiceRepository stagingInvoiceRepository;
     private final EtlLogRepository etlLogRepository;
+    private final MessageConverter messageConverter;
+    private final ObjectMapper objectMapper;
 
     @RabbitListener(queues = "${etl.queues.quality}")
     public void consumeQualityMessage(Object payload) {
         OffsetDateTime start = OffsetDateTime.now();
         try {
+            if (payload instanceof Message amqpMessage) {
+                Object converted = messageConverter.fromMessage(amqpMessage);
+                consumeQualityMessage(converted);
+                return;
+            }
+            if (payload instanceof Map<?, ?> mapPayload) {
+                Object mapped = mapToDto(mapPayload);
+                if (mapped != null) {
+                    consumeQualityMessage(mapped);
+                } else {
+                    log.warn("Unsupported map payload for quality queue: {}", mapPayload);
+                    saveLog("LOAD_UNKNOWN", "unknown", "FAILED", "Unsupported map payload", start);
+                }
+                return;
+            }
             if (payload instanceof BookRawMessage book) {
                 stagingBookRepository.upsert(book, DataQualityStatus.VALIDATED, null);
                 log.debug("Loaded book {} into staging", book.getBookId());
@@ -86,5 +107,24 @@ public class StagingLoaderService {
                 .startedAt(start)
                 .finishedAt(OffsetDateTime.now())
                 .build());
+    }
+
+    private Object mapToDto(Map<?, ?> mapPayload) {
+        if (mapPayload.containsKey("bookId")) {
+            return objectMapper.convertValue(mapPayload, BookRawMessage.class);
+        }
+        if (mapPayload.containsKey("userId")) {
+            return objectMapper.convertValue(mapPayload, UserRawMessage.class);
+        }
+        if (mapPayload.containsKey("orderId")) {
+            return objectMapper.convertValue(mapPayload, OrderRawMessage.class);
+        }
+        if (mapPayload.containsKey("cartId")) {
+            return objectMapper.convertValue(mapPayload, CartRawMessage.class);
+        }
+        if (mapPayload.containsKey("invoiceId")) {
+            return objectMapper.convertValue(mapPayload, InvoiceRawMessage.class);
+        }
+        return null;
     }
 }

@@ -1,0 +1,18 @@
+.results-view {
+  padding: 16px;
+}
+.top-area {
+  margin-bottom: 16px;
+}
+.tables-grid {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.tables-grid .left,
+.tables-grid .right {
+  flex: 1;
+}
+.results-panel-area {
+  margin-top: 18px;
+}

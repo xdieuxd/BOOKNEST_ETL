@@ -15,13 +15,18 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_RABBITMQ_HOST: booknest-rabbitmq
-      SPRING_RABBITMQ_PORT: 5673
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-source:3306/staging_db
-      SPRING_DATASOURCE_USERNAME: xuandieu
-      SPRING_DATASOURCE_PASSWORD: xuandieu1905
-      SOURCE_DB_URL: jdbc:mysql://mysql-source:3306/source_db
-      SOURCE_DB_USERNAME: xuandieu
-      SOURCE_DB_PASSWORD: xuandieu1905
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      # Source DB (primary datasource)
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-source:3306/source_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      # Staging DB (secondary datasource)
+      STAGING_DB_HOST: mysql-source
+      STAGING_DB_USERNAME: root
+      STAGING_DB_PASSWORD: root
+      STAGING_DB_URL: jdbc:mysql://mysql-source:3306/staging_db
     ports:
       - "8080:8080"
     restart: on-failure
@@ -45,10 +50,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: source_db
+      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
     ports:
       - "3310:3306"
     volumes:
       - mysql_source_data:/var/lib/mysql
+      - ./scripts/init-mysql.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
       interval: 20s

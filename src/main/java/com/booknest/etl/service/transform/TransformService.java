@@ -22,9 +22,9 @@ public class TransformService {
 
     public BookRawMessage transformBook(BookRawMessage input) {
         return input.toBuilder()
-                .title(normalizeTitle(input.getTitle()))
+                .title(trim(input.getTitle()))  // Giữ nguyên tên sách, chỉ trim
                 .description(trim(input.getDescription()))
-                .authors(input.getAuthors().stream().map(this::normalizeTitle).collect(Collectors.toList()))
+                .authors(input.getAuthors().stream().map(this::trim).collect(Collectors.toList()))  // Giữ nguyên tên tác giả
                 .categories(input.getCategories().stream().map(this::trim).collect(Collectors.toList()))
                 .status(transformStatus(input.getStatus()))
                 .build();
@@ -32,7 +32,7 @@ public class TransformService {
 
     public UserRawMessage transformUser(UserRawMessage input) {
         return input.toBuilder()
-                .fullName(normalizeTitle(input.getFullName()))
+                .fullName(trim(input.getFullName()))  // Chỉ trim, giữ nguyên case gốc
                 .email(lowerCase(input.getEmail()))
                 .phone(normalizePhone(input.getPhone()))
                 .status(transformStatus(input.getStatus()))
@@ -49,7 +49,7 @@ public class TransformService {
                 .subtract(defaultValue(input.getDiscount()));
 
         return input.toBuilder()
-                .customerName(normalizeTitle(input.getCustomerName()))
+                .customerName(trim(input.getCustomerName()))  // Chỉ trim, giữ nguyên case gốc
                 .customerEmail(lowerCase(input.getCustomerEmail()))
                 .totalAmount(total)
                 .items(input.getItems() == null ? input.getItems()
@@ -85,7 +85,12 @@ public class TransformService {
                 .build();
     }
 
-    private String normalizeTitle(String value) {
+    /**
+     * Chuẩn hóa tên người: trim, lowercase, sau đó viết hoa chữ cái đầu mỗi từ
+     * VD: "nguyễn   văn   A" → "Nguyễn Văn A"
+     * CHỈ dùng cho tên người (customer, user), KHÔNG dùng cho title sách!
+     */
+    private String normalizePersonName(String value) {
         if (!StringUtils.hasText(value)) {
             return value;
         }

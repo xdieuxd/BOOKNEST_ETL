@@ -1,0 +1,6 @@
+customer_id,full_name,email,phone,status,roles,created_at
+DEMO_CUS_001,Nguyễn Văn An,an.nguyen@gmail.com,0912345678,HOAT_DONG,THANH_VIEN,2024-07-15T09:00:00
+DEMO_CUS_002,Trần Thị Bình,binh.tran@gmail.com,0923456789,HOAT_DONG,THANH_VIEN,2024-07-16T10:00:00
+DEMO_CUS_003,Lê Minh Châu,chau.le@gmail.com,0934567890,HOAT_DONG,THANH_VIEN,2024-07-17T11:00:00
+DEMO_CUS_004,Phạm Thị Dung,dung.pham@gmail.com,0945678901,HOAT_DONG,THANH_VIEN,2024-07-18T12:00:00
+DEMO_CUS_005,Hoàng Văn Em,em.hoang@gmail.com,0956789012,HOAT_DONG,ADMIN,2024-07-19T13:00:00

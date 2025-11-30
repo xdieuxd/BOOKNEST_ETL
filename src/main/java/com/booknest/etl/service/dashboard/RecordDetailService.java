@@ -57,11 +57,11 @@ public class RecordDetailService {
     private Map<String, Object> fetchStaging(String entityType, String entityKey) {
         try {
             return switch (entityType.toUpperCase()) {
-                case "BOOK" -> stagingJdbcTemplate.queryForMap("SELECT * FROM stg_books WHERE book_key = ?", entityKey);
-                case "CUSTOMER", "USER" -> stagingJdbcTemplate.queryForMap("SELECT * FROM stg_customers WHERE customer_key = ?", entityKey);
-                case "ORDER" -> stagingJdbcTemplate.queryForMap("SELECT * FROM stg_orders WHERE order_key = ?", entityKey);
-                case "CART" -> stagingJdbcTemplate.queryForMap("SELECT * FROM stg_carts WHERE cart_key = ?", entityKey);
-                case "INVOICE" -> stagingJdbcTemplate.queryForMap("SELECT * FROM stg_invoices WHERE invoice_key = ?", entityKey);
+                case "BOOK" -> stagingJdbcTemplate.queryForMap("SELECT * FROM staging_db.stg_books WHERE book_key = ?", entityKey);
+                case "CUSTOMER", "USER" -> stagingJdbcTemplate.queryForMap("SELECT * FROM staging_db.stg_customers WHERE customer_key = ?", entityKey);
+                case "ORDER" -> stagingJdbcTemplate.queryForMap("SELECT * FROM staging_db.stg_orders WHERE order_key = ?", entityKey);
+                case "CART" -> stagingJdbcTemplate.queryForMap("SELECT * FROM staging_db.stg_carts WHERE cart_key = ?", entityKey);
+                case "INVOICE" -> stagingJdbcTemplate.queryForMap("SELECT * FROM staging_db.stg_invoices WHERE invoice_key = ?", entityKey);
                 default -> Map.of();
             };
         } catch (Exception ex) {
@@ -73,7 +73,7 @@ public class RecordDetailService {
         try {
             return stagingJdbcTemplate.queryForMap("""
                     SELECT status, errors, checked_at
-                    FROM dq_result
+                    FROM staging_db.dq_result
                     WHERE entity_type = ? AND entity_key = ?
                     ORDER BY checked_at DESC
                     LIMIT 1

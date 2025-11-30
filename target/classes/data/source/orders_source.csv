@@ -1,4 +1,17 @@
-order_id,customer_name,customer_email,status,payment_method,total_amount,discount,shipping_fee,book_codes,created_at
-CSV_ORDER_1001,Pham Thanh,thanh@example.com,DA_THANH_TOAN,ONLINE,285000,15000,30000,"CSV_BOOK_001|CSV_BOOK_002",2024-07-21T10:15:00
-CSV_ORDER_1002,Doan Bich,bich@example.com,CHO_THANH_TOAN,COD,120000,0,25000,"CSV_BOOK_003",2024-07-22T08:40:00
-CSV_ORDER_1003,Tran Han,han@example.com,DA_HUY,ONLINE,95000,0,0,"CSV_BOOK_001",2024-07-23T13:05:00
+order_id,customer_name,customer_email,status,payment_method,total_amount,discount,shipping_fee,created_at
+CSV_ORDER_1001,phạm   THANH,THANH@Gmail.COM,da_thanh_toan,ONLINE,245000,15000,30000,2024-07-21T10:15:00
+CSV_ORDER_1002,ĐOÀN   bích,Bich@GMAIL.com,cho_thanh_toan,COD,145000,0,25000,2024-07-22T08:40:00
+CSV_ORDER_1003,trần   HÂN,HAN@gmail.COM,da_huy,ONLINE,95000,0,0,2024-07-23T13:05:00
+CSV_ORDER_1004,,valid@gmail.com,DA_THANH_TOAN,ONLINE,100000,0,0,2024-07-24T09:00:00
+CSV_ORDER_1005,Nguyễn Văn A,,TAO_MOI,COD,50000,0,0,2024-07-25T10:30:00
+CSV_ORDER_1006,Lê Thị B,bad-email-format,DA_THANH_TOAN,ONLINE,75000,0,0,2024-07-26T11:45:00
+CSV_ORDER_1007,Vũ Văn C,customer@gmail.com,INVALID_STATUS,COD,60000,0,0,2024-07-27T12:00:00
+CSV_ORDER_1008,Trương Thị D,d@gmail.com,TAO_MOI,INVALID_PAYMENT,80000,0,0,2024-07-28T13:15:00
+CSV_ORDER_1009,Hoàng Văn E,e@gmail.com,TAO_MOI,ONLINE,50000,0,0,2024-07-29T14:30:00
+CSV_ORDER_1010,Phan Thị F,f@gmail.com,TAO_MOI,COD,100000,-10000,20000,2024-07-30T15:45:00
+CSV_ORDER_1011,Đinh Văn G,g@gmail.com,CHO_THANH_TOAN,ONLINE,120000,5000,-30000,2024-07-31T16:00:00
+CSV_ORDER_1012,Bùi Thị H,h@gmail.com,DANG_GIAO,COD,90000,0,0,2026-01-01T10:00:00
+CSV_ORDER_1013,Nguyễn Thị Hương Quỳnh Anh Mai Phương Thảo Linh Đan Thanh Vân Hà Trang Thu Hằng Nga Dung Tuyết Ngọc Lan Hoa Diệu Liên Phước An Bình Tâm Như Ý Xuân Hạ Thu Đông Nam Bắc Tây Đông Trung,longname@gmail.com,TAO_MOI,ONLINE,70000,0,0,2024-08-01T09:30:00
+CSV_ORDER_1014,Lý Văn K,k@gmail.com,TAO_MOI,ONLINE,70000,0,0,2024-08-02T10:00:00
+CSV_ORDER_1015,Trần Văn L,l@gmail.com,TAO_MOI,COD,0,0,0,2024-08-03T11:00:00
+CSV_ORDER_1016,Hoàng Thị M,m@gmail.com,CHO_THANH_TOAN,ONLINE,-50000,0,0,2024-08-04T12:00:00

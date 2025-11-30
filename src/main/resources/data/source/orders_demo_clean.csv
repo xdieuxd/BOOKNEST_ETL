@@ -1,0 +1,6 @@
+order_id,customer_name,customer_email,status,payment_method,total_amount,discount,shipping_fee,created_at
+DEMO_ORDER_001,Nguyễn Văn An,an.nguyen@gmail.com,DA_THANH_TOAN,ONLINE,280000,20000,30000,2024-08-01 10:00:00
+DEMO_ORDER_002,Trần Thị Bình,binh.tran@gmail.com,CHO_THANH_TOAN,COD,350000,0,25000,2024-08-02 11:00:00
+DEMO_ORDER_003,Lê Minh Châu,chau.le@gmail.com,DA_THANH_TOAN,ONLINE,180000,10000,20000,2024-08-03 12:00:00
+DEMO_ORDER_004,Phạm Thị Dung,dung.pham@gmail.com,DANG_GIAO,ONLINE,530000,30000,30000,2024-08-04 13:00:00
+DEMO_ORDER_005,Hoàng Văn Em,em.hoang@gmail.com,DA_NHAN,COD,460000,0,30000,2024-08-05 14:00:00

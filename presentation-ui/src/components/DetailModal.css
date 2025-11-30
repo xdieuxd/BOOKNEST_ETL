@@ -1,0 +1,27 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.modal {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 900px;
+  max-height: 80vh;
+  overflow: auto;
+}
+.modal .close {
+  float: right;
+}
+.modal pre {
+  background: #f6f8fa;
+  padding: 10px;
+  border-radius: 6px;
+  overflow: auto;
+}

@@ -1,4 +1,3 @@
-
 DROP DATABASE IF EXISTS source_db;
 CREATE DATABASE source_db CHARACTER SET utf8mb4 COLLATE utf8mb4_vi_0900_ai_ci;
 
@@ -152,6 +151,29 @@ CREATE TABLE hoa_don (
   INDEX idx_hd_ngay (ngay_tao)
 );
 
+-- ETL log & DQ result in source_db (giúp không thiếu bảng khi app ghi log)
+CREATE TABLE IF NOT EXISTS etl_log (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  job_name VARCHAR(100) NOT NULL,
+  stage ENUM('EXTRACT','TRANSFORM','LOAD','QUALITY','ERROR','DQ') NOT NULL,
+  status ENUM('STARTED','SUCCESS','FAILED') NOT NULL,
+  message TEXT,
+  started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  finished_at TIMESTAMP NULL,
+  source_record VARCHAR(100) NULL,
+  target_record VARCHAR(100) NULL
+);
+
+CREATE TABLE IF NOT EXISTS dq_result (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  entity_type ENUM('BOOK','ORDER','CUSTOMER','CART','INVOICE','ERROR') NOT NULL,
+  entity_key VARCHAR(100) NOT NULL,
+  status ENUM('PASSED','FAILED','FIXED') NOT NULL DEFAULT 'PASSED',
+  errors JSON NULL,
+  checked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_dq_entity (entity_type, entity_key)
+);
+
 -- Seed sample data
 INSERT INTO tac_gia (ten_tac_gia) VALUES ('Nguyen Nhat Anh'), ('Haruki Murakami'), ('Nguyen Ngoc Tu');
 INSERT INTO the_loai (ten_the_loai) VALUES ('Thieu nhi'), ('Tieu thuyet'), ('Truyen ngan');
@@ -166,9 +188,9 @@ INSERT INTO sach_the_loai VALUES (1,1),(2,2),(3,3);
 
 INSERT INTO vai_tro (ten_vai_tro) VALUES ('ADMIN'), ('NHAN_VIEN'), ('THANH_VIEN');
 INSERT INTO nguoi_dung (ho_ten,email,sdt,mat_khau_hash,trang_thai)
-VALUES ('Tran Minh','minh@example.com','0909123123','hash1','HOAT_DONG'),
-       ('Le Hoa','hoa@example.com','0909888777','hash2','HOAT_DONG'),
-       ('Nguyen Binh','binh@example.com','0909666777','hash3','HOAT_DONG');
+VALUES ('Tran Minh','minh@gmail.com','0909123123','hash1','HOAT_DONG'),
+       ('Le Hoa','hoa@gmail.com','0909888777','hash2','HOAT_DONG'),
+       ('Nguyen Binh','binh@gmail.com','0909666777','hash3','HOAT_DONG');
 
 INSERT INTO nguoi_dung_vai_tro VALUES (1,1),(2,3),(3,3);
 

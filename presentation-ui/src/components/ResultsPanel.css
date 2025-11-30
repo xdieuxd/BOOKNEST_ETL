@@ -1,0 +1,423 @@
+.results-panel {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 32px;
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tab-btn {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #7f8c8d;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  top: 2px;
+}
+
+.tab-btn:hover {
+  color: #2c3e50;
+}
+
+.tab-btn.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+}
+
+.tab-content {
+  margin-top: 24px;
+}
+
+.tab-pane h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+
+.error-info {
+  background: #fff3cd;
+  color: #856404;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+}
+
+.no-data {
+  text-align: center;
+  color: #95a5a6;
+  padding: 32px 16px;
+  font-size: 1.05rem;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+  max-height: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.data-table th {
+  background: #f8f9fa;
+  padding: 12px;
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: left;
+  border-bottom: 2px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+}
+
+.data-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.data-table tr:hover {
+  background: #f8f9fa;
+}
+
+.success-row {
+  background: #f0fdf4;
+}
+
+.error-row {
+  background: #fef2f2;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 6px;
+  border: 2px solid #667eea;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.action-cell {
+  white-space: nowrap;
+  text-align: center;
+}
+
+.errors-cell {
+  max-width: 300px;
+  padding: 8px !important;
+}
+
+.error-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.error-item {
+  border-left: 4px solid #dc2626;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.error-field {
+  font-weight: 700;
+  color: #991b1b;
+}
+
+.error-rule {
+  font-weight: 600;
+  color: #b91c1c;
+}
+
+.error-message {
+  color: #7f1d1d;
+  font-style: italic;
+}
+
+.no-errors {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.error-text {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.btn-edit,
+.btn-save,
+.btn-cancel {
+  padding: 6px 10px;
+  margin: 0 2px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-edit {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #2563eb;
+}
+
+.btn-save {
+  background: #10b981;
+  color: white;
+}
+
+.btn-save:hover {
+  background: #059669;
+}
+
+.btn-cancel {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: #dc2626;
+}
+
+/* Edit Form Styles */
+.edit-form-row {
+  background: #f0f9ff !important;
+  border: 2px solid #667eea !important;
+}
+
+.edit-form-cell {
+  padding: 20px !important;
+}
+
+.edit-form {
+  background: white;
+  border: 1px solid #e0e7ff;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.edit-form h4 {
+  margin: 0 0 16px 0;
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+.edit-fields {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.edit-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.edit-field-group label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.error-info {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  background: #fef2f2;
+  border-left: 4px solid #dc2626;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.edit-input-field {
+  padding: 8px 12px;
+  border: 2px solid #e0e7ff;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.edit-input-field:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.results-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-load-db,
+.btn-export,
+.btn-retry {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.btn-load-db {
+  background: #667eea;
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-load-db:hover:not(:disabled) {
+  background: #5568d3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-load-db:disabled {
+  background: #cccccc;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-export {
+  background: #10b981;
+  color: white;
+}
+
+.btn-export:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+.btn-export:disabled {
+  background: #cccccc;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-retry {
+  background: #f59e0b;
+  color: white;
+}
+
+.btn-retry:hover {
+  background: #d97706;
+  transform: translateY(-2px);
+}
+
+.success-msg {
+  color: #10b981;
+  font-weight: 600;
+  margin: 0;
+  padding: 8px 12px;
+  background: #f0fdf4;
+  border-left: 4px solid #10b981;
+  border-radius: 4px;
+}
+
+.required {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+/* Value comparison styles */
+.value-comparison {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+
+.original-value {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.original-value .label {
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.transformed-value {
+  color: #111827;
+  font-weight: 500;
+}
+
+.transformed-value.changed {
+  color: #059669;
+  font-weight: 600;
+}
+
+.transformed-value .label {
+  color: #10b981;
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+@media (max-width: 768px) {
+  .tabs {
+    flex-direction: column;
+  }
+
+  .tab-btn {
+    width: 100%;
+    text-align: left;
+  }
+
+  .table-wrapper {
+    max-height: 400px;
+  }
+
+  .results-footer {
+    flex-direction: column;
+  }
+
+  .btn-export,
+  .btn-retry {
+    width: 100%;
+  }
+
+  .edit-actions {
+    flex-direction: column;
+  }
+}

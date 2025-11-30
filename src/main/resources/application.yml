@@ -4,7 +4,6 @@ spring:
 
   profiles:
     active: docker
-
 ---
 spring:
   config:
@@ -13,7 +12,7 @@ spring:
 
   rabbitmq:
     host: ${SPRING_RABBITMQ_HOST:booknest-rabbitmq}
-    port: ${SPRING_RABBITMQ_PORT:5673}
+    port: ${SPRING_RABBITMQ_PORT:5672}
     username: ${SPRING_RABBITMQ_USERNAME:guest}
     password: ${SPRING_RABBITMQ_PASSWORD:guest}
 
@@ -25,7 +24,7 @@ spring:
 
 staging:
   datasource:
-    url: jdbc:mysql://${STAGING_DB_HOST:mysql-source}:3306/staging_db
+    url: ${STAGING_DB_URL:jdbc:mysql://${STAGING_DB_HOST:mysql-source}:3306/staging_db}
     username: ${STAGING_DB_USERNAME:root}
     password: ${STAGING_DB_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver

@@ -24,7 +24,7 @@ public class ErrorMessageListener {
         log.warn("Error result received for entity {}:{} -> {}", result.getEntityType(), result.getEntityKey(), result.getErrors());
         etlLogRepository.save(EtlLog.builder()
                 .jobName("DATA_QUALITY")
-                .stage("DQ")
+                .stage("QUALITY")
                 .status("FAILED")
                 .message(result.getMessage())
                 .sourceRecord(result.getEntityType() + ":" + result.getEntityKey())

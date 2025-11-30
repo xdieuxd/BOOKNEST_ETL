@@ -198,13 +198,21 @@ public class CsvExtractService {
         try {
             return OffsetDateTime.parse(raw);
         } catch (DateTimeParseException ex) {
-            // try without zone
+            // try without zone (ISO format: 2024-08-01T10:00:00)
             try {
                 return java.time.LocalDateTime.parse(raw)
                         .atOffset(OffsetDateTime.now().getOffset());
             } catch (DateTimeParseException second) {
-                log.warn("Cannot parse datetime value '{}'", raw);
-                return null;
+                // try with space separator (2024-08-01 10:00:00)
+                try {
+                    java.time.format.DateTimeFormatter formatter = 
+                        java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    return java.time.LocalDateTime.parse(raw, formatter)
+                            .atOffset(OffsetDateTime.now().getOffset());
+                } catch (DateTimeParseException third) {
+                    log.warn("Cannot parse datetime value '{}'", raw);
+                    return null;
+                }
             }
         }
     }

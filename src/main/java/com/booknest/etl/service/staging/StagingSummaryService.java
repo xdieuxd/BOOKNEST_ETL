@@ -5,14 +5,16 @@ import java.util.Map;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Service
-@RequiredArgsConstructor
 public class StagingSummaryService {
 
     private final JdbcTemplate stagingJdbcTemplate;
+
+    public StagingSummaryService(@Qualifier("stagingJdbcTemplate") JdbcTemplate stagingJdbcTemplate) {
+        this.stagingJdbcTemplate = stagingJdbcTemplate;
+    }
 
     public Map<String, Long> loadSummary() {
         Map<String, Long> summary = new LinkedHashMap<>();
@@ -28,11 +30,11 @@ public class StagingSummaryService {
     }
 
     private Long countTable(String table) {
-        return stagingJdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + table, Long.class);
+        return stagingJdbcTemplate.queryForObject("SELECT COUNT(*) FROM staging_db." + table, Long.class);
     }
 
     private Long countStatus(String status) {
         return stagingJdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM dq_result WHERE status = ?", Long.class, status);
+                "SELECT COUNT(*) FROM staging_db.dq_result WHERE status = ?", Long.class, status);
     }
 }

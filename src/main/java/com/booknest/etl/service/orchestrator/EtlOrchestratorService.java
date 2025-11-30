@@ -28,7 +28,8 @@ public class EtlOrchestratorService {
     private final DatabaseExtractService databaseExtractService;
     private final EtlMessagePublisher messagePublisher;
 
-    @Scheduled(fixedDelayString = "${etl.extract.schedule-fixed-delay:300000}")
+    // TẠẠM TẮT scheduled job để data trong staging không bị ghi đè khi demo
+    // @Scheduled(fixedDelayString = "${etl.extract.schedule-fixed-delay:300000}")
     public void scheduleExtractJob() {
         log.info("Starting scheduled extract job");
         runDatabaseExtract();

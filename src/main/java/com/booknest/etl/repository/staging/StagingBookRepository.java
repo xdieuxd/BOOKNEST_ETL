@@ -4,6 +4,7 @@ import java.sql.Types;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.booknest.etl.dto.BookRawMessage;
 import com.booknest.etl.dq.DataQualityStatus;
@@ -13,13 +14,13 @@ public class StagingBookRepository {
 
     private final JdbcTemplate stagingJdbcTemplate;
 
-    public StagingBookRepository(JdbcTemplate stagingJdbcTemplate) {
+    public StagingBookRepository(@Qualifier("stagingJdbcTemplate") JdbcTemplate stagingJdbcTemplate) {
         this.stagingJdbcTemplate = stagingJdbcTemplate;
     }
 
     public void upsert(BookRawMessage message, DataQualityStatus qualityStatus, String qualityErrors) {
         String sql = """
-                INSERT INTO stg_books (book_key, title, authors, categories, description, price, free_flag,
+                INSERT INTO staging_db.stg_books (book_key, title, authors, categories, description, price, free_flag,
                                        released_at, avg_rating, total_orders, quality_status, quality_errors, source, loaded_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
                 ON DUPLICATE KEY UPDATE

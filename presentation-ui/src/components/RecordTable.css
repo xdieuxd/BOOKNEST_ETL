@@ -1,0 +1,25 @@
+.panel {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  padding: 8px;
+}
+.panel-header h3 {
+  margin: 0 0 8px 0;
+}
+.panel-body table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.panel-body th,
+.panel-body td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.panel-success {
+  border-left: 4px solid #2ecc71;
+}
+.panel-danger {
+  border-left: 4px solid #e74c3c;
+}

@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.booknest.etl.dto.OrderRawMessage;
 import com.booknest.etl.dq.DataQualityStatus;
@@ -14,13 +15,13 @@ public class StagingOrderRepository {
 
     private final JdbcTemplate stagingJdbcTemplate;
 
-    public StagingOrderRepository(JdbcTemplate stagingJdbcTemplate) {
+    public StagingOrderRepository(@Qualifier("stagingJdbcTemplate") JdbcTemplate stagingJdbcTemplate) {
         this.stagingJdbcTemplate = stagingJdbcTemplate;
     }
 
     public void upsert(OrderRawMessage order, DataQualityStatus qualityStatus, String errors) {
         String sql = """
-                INSERT INTO stg_orders (order_key, customer_key, status, payment_method,
+            INSERT INTO staging_db.stg_orders (order_key, customer_key, status, payment_method,
                                         subtotal, discount, shipping_fee, total_amount,
                                         payment_ref, receiver_name, receiver_phone, receiver_address,
                                         order_date, updated_at, quality_status, quality_errors, loaded_at)
@@ -44,7 +45,7 @@ public class StagingOrderRepository {
                     loaded_at = NOW()
                 """;
 
-        stagingJdbcTemplate.update(sql, new Object[]{
+                stagingJdbcTemplate.update(sql, new Object[]{
                 order.getOrderId(),
                 order.getCustomerEmail(),
                 order.getStatus(),

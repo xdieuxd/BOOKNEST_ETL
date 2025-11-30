@@ -1,4 +1,20 @@
 customer_id,full_name,email,phone,status,roles,created_at
-CSV_CUS_001,Nguyen Quang Huy,huy@example.com,0909111222,ACTIVE,"THANH_VIEN",2024-07-15T09:00:00
-CSV_CUS_002,Pham Thi Mai,mai@example.com,0909333444,ACTIVE,"THANH_VIEN|VIP",2024-07-18T14:25:00
-CSV_CUS_003,Le Manh Linh,linh@example.com,0909555666,LOCKED,"THANH_VIEN",2024-07-19T16:50:00
+CSV_CUS_001,nguyễn   quang   huy,Huy@GMAIL.COM,090-911-1222,hoat_dong,THANH_VIEN,2024-07-15T09:00:00
+CSV_CUS_002,PHẠM thị MAI,MAI@gmail.COM,(090) 933-3444,hoat_dong,THANH_VIEN|VIP,2024-07-18T14:25:00
+CSV_CUS_003,lê   MẠNH   linh,LINH@Gmail.com,090.955.5666,khoa,THANH_VIEN,2024-07-19T16:50:00
+CSV_CUS_004,trần VĂN nam,Nam.TRAN@Company.VN,091-234-5678,hoat_dong,THANH_VIEN|ADMIN,2024-08-01T10:30:00
+CSV_CUS_005,,huy2@gmail.com,0909876543,HOAT_DONG,THANH_VIEN,2024-08-02T11:00:00
+CSV_CUS_006,Lê Thị D,bad-email,0911222333,HOAT_DONG,THANH_VIEN,2024-08-03T14:20:00
+CSV_CUS_007,Nguyễn Hùng Thắng,missing-email@,0900000000,HOAT_DONG,THANH_VIEN,2024-08-04T15:45:00
+CSV_CUS_008,vũ   THANH   hà,,088-888-8888,hoat_dong,THANH_VIEN,2024-08-05T16:10:00
+CSV_CUS_009,đỗ MINH tuấn,TUAN@Gmail.COM,,hoat_dong,THANH_VIEN,2024-08-06T09:30:00
+CSV_CUS_010,HOÀNG thị LAN,LAN@GMAIL.com,123,hoat_dong,THANH_VIEN,2024-08-07T10:00:00
+CSV_CUS_011,phan   VĂN   LONG,LONG@gmail.COM,09123456789012345678,hoat_dong,THANH_VIEN,2024-08-08T11:15:00
+CSV_CUS_012,bùi THỊ hoa,HOA@Gmail.COM,098-765-4321,INVALID_STATUS,THANH_VIEN,2024-08-09T12:30:00
+CSV_CUS_013,Lý Văn Khoa,khoa@gmail.com,0976543210,HOAT_DONG,THANH_VIEN,2024-08-10T13:45:00
+CSV_CUS_014,1234 Invalid Name,invalid@gmail.com,0965432109,HOAT_DONG,THANH_VIEN,2024-08-11T14:00:00
+CSV_CUS_015,Nguyễn Thị Hương Quỳnh Anh Mai Phương Thảo Linh Đan Thanh Vân Hà Trang Thu Hằng Nga Dung Tuyết Ngọc Lan Hoa Diệu Liên Phước An Bình Tâm Như Ý Xuân Hạ Thu Đông Nam Bắc Tây Đông,huong@gmail.com,0954321098,HOAT_DONG,THANH_VIEN,2024-08-12T15:20:00
+CSV_CUS_016,Đinh Văn Sơn,son.dinh.very.long.email.address.that.exceeds.one.hundred.fifty.characters.limit.for.testing.purposes.only.this.is.a.very.long.email@verylongdomainname.extended.gmail.com,0943210987,HOAT_DONG,THANH_VIEN,2024-08-13T16:00:00
+CSV_CUS_017,Nguyễn@Văn#Tèo,special@gmail.com,0932109876,,THANH_VIEN,2024-08-14T09:00:00
+CSV_CUS_018,Lê Văn Tám,tam@gmail.com,abc123456789,HOAT_DONG,THANH_VIEN,2024-08-15T10:00:00
+CSV_CUS_019,Phạm Thị Y,y@gmail.com,0921098765,HOAT_DONG,,2024-08-16T11:00:00

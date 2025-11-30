@@ -4,6 +4,7 @@ import java.sql.Types;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.booknest.etl.dto.UserRawMessage;
 import com.booknest.etl.dq.DataQualityStatus;
@@ -13,13 +14,13 @@ public class StagingCustomerRepository {
 
     private final JdbcTemplate stagingJdbcTemplate;
 
-    public StagingCustomerRepository(JdbcTemplate stagingJdbcTemplate) {
+    public StagingCustomerRepository(@Qualifier("stagingJdbcTemplate") JdbcTemplate stagingJdbcTemplate) {
         this.stagingJdbcTemplate = stagingJdbcTemplate;
     }
 
     public void upsert(UserRawMessage user, DataQualityStatus qualityStatus, String errors) {
         String sql = """
-                INSERT INTO stg_customers (customer_key, full_name, email, phone, roles, status, quality_status, quality_errors, loaded_at)
+                INSERT INTO staging_db.stg_customers (customer_key, full_name, email, phone, roles, status, quality_status, quality_errors, loaded_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
                 ON DUPLICATE KEY UPDATE
                     full_name = VALUES(full_name),

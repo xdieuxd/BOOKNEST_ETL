@@ -1,4 +1,16 @@
-book_id,title,authors,categories,price,released_at,free_flag,description
-CSV_BOOK_001,Toi thay hoa vang tren co xanh,Nguyen Nhat Anh,Thieu nhi,95000,2012-07-20,false,"Nguoi ke chuyen bang giong dieu trong veo ve tuoi tho o Phu Yen"
-CSV_BOOK_002,Chang hiem doi tren may,Hoang Anh Tuan,Phieu luu,135000,2019-04-12,false,"Chuyen du ngoan kham pha nhung ngon nui phia Bac Viet Nam"
-CSV_BOOK_003,Nhung giac mo ban dem,Le Minh Chau,Tieu thuyet,0,2020-11-05,true,"Tuyen tap sach dien tu phat hanh mien phi phuc vu doc gia online"
+book_id,title,authors,categories,price,released_at,free_flag,status,description
+CSV_BOOK_001,tôi   thấy   HOA   vàng   trên   cỏ   xanh,nguyễn NHẬT ánh,Thiếu nhi,95000,2012-07-20,false,hieu_luc,Người kể chuyện bằng giọng điệu trong veo về tuổi thơ ở Phú Yên
+CSV_BOOK_002,CHÀNG hiểm ĐỜI   trên   MÂY,hoàng ANH tuấn,Phiêu lưu,135000,2019-04-12,false,hieu_luc,Chuyến du ngoạn khám phá những ngọn núi phía Bắc Việt Nam
+CSV_BOOK_003,những   GIẤC   mơ   ban   đêm,lê   MINH   châu,Tiểu thuyết,0,2020-11-05,true,hieu_luc,Tuyển tập sách điện tử phát hành miễn phí phục vụ độc giả online
+CSV_BOOK_004,,Anonymous,Truyện ngắn,-50000,2021-01-01,false,HIEU_LUC,Sách có vấn đề về tiêu đề và giá
+CSV_BOOK_005,Invalid Price Book,Some Author,Khác,abc,2022-02-02,false,HIEU_LUC,Sách có giá không hợp lệ
+CSV_BOOK_006,Sách không có tác giả,,Văn học,75000,2023-03-15,false,HIEU_LUC,Thiếu thông tin tác giả
+CSV_BOOK_007,Sách không có thể loại,Tác giả X,,60000,2023-04-20,false,HIEU_LUC,Chưa phân loại thể loại
+CSV_BOOK_008,Sách trạng thái không hợp lệ,Tác giả Y,Kinh dị,55000,2023-05-10,false,INVALID_STATUS,Trạng thái cần xem xét
+CSV_BOOK_009,Sách phát hành tương lai,Tác giả Z,Khoa học,120000,2026-12-31,false,HIEU_LUC,Dự kiến phát hành năm sau
+CSV_BOOK_010,Sách miễn phí nhưng có giá,Tác giả A,Giáo dục,50000,2023-06-01,true,HIEU_LUC,Thông tin giá cần xem lại
+CSV_BOOK_011,Tên sách quá dài vượt quá 300 ký tự Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat Duis aute irure dolor in reprehenderit,Tác giả B,Khác,80000,2023-07-15,false,HIEU_LUC,Tên sách cần rút gọn
+CSV_BOOK_012,Sách miễn phí,Tác giả C,Công nghệ,0,2023-08-01,true,HIEU_LUC,Tài liệu miễn phí cho cộng đồng
+CSV_BOOK_013,Lập trình Python nâng cao,Nguyễn Văn A|Trần Thị B,Công nghệ|Lập trình,250000,2024-01-15,false,HIEU_LUC,Sách chuyên sâu về Python
+CSV_BOOK_014,Sách bị ẩn,Tác giả D,Tâm lý,100000,2024-02-20,false,AN,Sách tạm thời không hiển thị
+CSV_BOOK_015,Sách không có trạng thái,Tác giả E,Khác,85000,2024-03-01,false,,Thiếu thông tin trạng thái
