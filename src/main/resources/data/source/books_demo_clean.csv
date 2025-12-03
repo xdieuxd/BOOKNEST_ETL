@@ -1,5 +1,5 @@
 book_id,title,authors,categories,description,price,free,released_at,status
-DEMO_BOOK_001,Lập trình Java căn bản,Nguyễn Văn A|Trần Thị B,Công nghệ|Lập trình,Sách học lập trình Java từ cơ bản đến nâng cao,250000,false,2024-01-15,HIEU_LUC
+DEMO_BOOK_001,Lập trình Java căn bản,Nguyễn Văn A,Công nghệ|Lập trình,Sách học lập trình Java từ cơ bản đến nâng cao,250000,false,2024-01-15,HIEU_LUC
 DEMO_BOOK_002,Thiết kế hệ thống phần mềm,Lê Minh C,Công nghệ,Hướng dẫn thiết kế kiến trúc hệ thống,350000,false,2024-02-20,HIEU_LUC
 DEMO_BOOK_003,Truyện Kiều,Nguyễn Du,Văn học,Tác phẩm văn học kinh điển Việt Nam,150000,false,2023-03-10,HIEU_LUC
 DEMO_BOOK_004,Sách học Python miễn phí,Phạm Văn D,Công nghệ|Lập trình,Tài liệu học Python cho người mới bắt đầu,95000,true,2024-05-01,HIEU_LUC

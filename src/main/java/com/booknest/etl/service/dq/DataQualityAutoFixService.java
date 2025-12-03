@@ -16,6 +16,7 @@ public class DataQualityAutoFixService {
         return book.toBuilder()
                 .title(trim(book.getTitle()))
                 .description(trim(book.getDescription()))
+                .status(normalizeStatus(book.getStatus()))
                 .build();
     }
 
@@ -26,6 +27,7 @@ public class DataQualityAutoFixService {
                 .fullName(trim(user.getFullName()))
                 .email(trim(user.getEmail()).toLowerCase())
                 .phone(normalizePhone(user.getPhone()))
+                .status(normalizeStatus(user.getStatus()))
                 .build();
     }
 
@@ -36,6 +38,7 @@ public class DataQualityAutoFixService {
                 .customerName(trim(order.getCustomerName()))
                 .customerEmail(trim(order.getCustomerEmail()).toLowerCase())
                 .status(normalizeStatus(order.getStatus()))
+                .paymentMethod(normalizeStatus(order.getPaymentMethod()))  // Uppercase ONLINE/COD
                 .build();
     }
 
@@ -55,6 +58,14 @@ public class DataQualityAutoFixService {
                 .invoiceId(trim(invoice.getInvoiceId()))
                 .orderId(trim(invoice.getOrderId()))
                 .status(normalizeStatus(invoice.getStatus()))
+                .build();
+    }
+
+    public com.booknest.etl.dto.OrderItemRawMessage fixOrderItem(com.booknest.etl.dto.OrderItemRawMessage item) {
+        if (item == null) return null;
+
+        return item.toBuilder()
+                .bookId(trim(item.getBookId()))
                 .build();
     }
 

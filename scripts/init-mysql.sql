@@ -242,7 +242,7 @@ CREATE TABLE stg_customers (
   email VARCHAR(150) NOT NULL,
   phone VARCHAR(20),
   roles VARCHAR(100),
-  status ENUM('ACTIVE','LOCKED') DEFAULT 'ACTIVE',
+  status VARCHAR(20) DEFAULT 'HOAT_DONG',
   quality_status ENUM('RAW','VALIDATED','REJECTED') DEFAULT 'RAW',
   quality_errors TEXT,
   loaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -107,8 +107,8 @@ export default function ResultsPanel({ state, onReprocess }) {
           return;
         }
       } else if (field === "authors") {
-        // Chuẩn hóa authors: viết hoa chữ cái đầu mỗi từ
-        editingData[field] = value.replace(/\b\w/g, (c) => c.toUpperCase());
+        // Không chuẩn hóa - để backend xử lý
+        editingData[field] = value;
       }
     }
 
@@ -172,25 +172,7 @@ export default function ResultsPanel({ state, onReprocess }) {
           .slice(0, 6)
       : [];
 
-    // Hàm chuẩn hóa tên
-    const normalizeName = (name) => {
-      if (!name) return "";
-      // Chuyển các tên tắt thành tên đầy đủ (ví dụ: ng t. Hà -> Nguyễn Thị Hà)
-      let result = name.trim();
-      result = result.replace(/ng\s*t\.?/i, "Nguyễn Thị");
-      result = result.replace(/le\s*m\.?/i, "Lê Minh");
-      // Viết hoa chữ cái đầu mỗi từ
-      result = result.replace(/\b\w/g, (c) => c.toUpperCase());
-      return result;
-    };
-    // Hàm chuẩn hóa status
-    const normalizeStatus = (status) => {
-      if (!status) return "";
-      return status
-        .trim()
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, (c) => c.toUpperCase());
-    };
+    // Backend đã xử lý normalization, frontend chỉ hiển thị
 
     return (
       <div className="table-wrapper" ref={tableWrapperRef}>
@@ -233,17 +215,8 @@ export default function ResultsPanel({ state, onReprocess }) {
                       const hasOriginal = row.hasOwnProperty(originalKey);
                       const originalValue = row[originalKey];
                       let transformedValue = String(row[col] || "");
-                      if (
-                        col === "full_name" ||
-                        col === "fullName" ||
-                        col === "title" ||
-                        col === "customer_name"
-                      )
-                        transformedValue = normalizeName(transformedValue);
-                      if (col === "status")
-                        transformedValue = normalizeStatus(transformedValue);
-                      if (col === "email" || col === "customer_email")
-                        transformedValue = transformedValue.toLowerCase();
+                      // Hiển thị nguyên giá trị từ backend, không transform lại
+                      // Backend đã xử lý normalization đúng với Unicode tiếng Việt
                       const isDifferent =
                         hasOriginal && originalValue !== row[col];
 

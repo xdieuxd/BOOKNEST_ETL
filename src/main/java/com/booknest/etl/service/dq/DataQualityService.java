@@ -101,13 +101,39 @@ public class DataQualityService {
         return invoiceRuleChain.validate(invoice);
     }
 
-    private void validateOrderItems(OrderRawMessage order, List<DqErrorDto> errors) {
-        if (order.getItems() == null || order.getItems().isEmpty()) {
+    public List<DqErrorDto> validateOrderItem(OrderItemRawMessage item) {
+        List<DqErrorDto> errors = new ArrayList<>();
+        
+        if (item.getBookId() == null || item.getBookId().isBlank()) {
             errors.add(DqErrorDto.builder()
-                    .field("items")
-                    .rule("MIN_SIZE")
-                    .message("Đơn hàng phải có ít nhất một sản phẩm")
+                    .field("book_id")
+                    .rule("NOT_BLANK")
+                    .message("Mã sách không được trống")
                     .build());
+        }
+        
+        if (item.getQuantity() == null || item.getQuantity() <= 0) {
+            errors.add(DqErrorDto.builder()
+                    .field("quantity")
+                    .rule("POSITIVE_INT")
+                    .message("Số lượng phải > 0")
+                    .build());
+        }
+        
+        if (item.getUnitPrice() == null || item.getUnitPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            errors.add(DqErrorDto.builder()
+                    .field("unit_price")
+                    .rule("POSITIVE")
+                    .message("Đơn giá phải > 0")
+                    .build());
+        }
+        
+        return errors;
+    }
+
+    private void validateOrderItems(OrderRawMessage order, List<DqErrorDto> errors) {
+        // Skip items validation if list is empty (orders CSV may not include items - they're in separate order_items CSV)
+        if (order.getItems() == null || order.getItems().isEmpty()) {
             return;
         }
         int index = 0;
@@ -219,7 +245,8 @@ public class DataQualityService {
     private DataQualityRuleChain<CartRawMessage> buildCartRules() {
         return new DataQualityRuleChain<CartRawMessage>()
                 .addRule(new NotBlankRule<>("cartId", "Mã giỏ hàng không được trống", CartRawMessage::getCartId))
-                .addRule(new NotBlankRule<>("customerId", "Mã khách không được trống", CartRawMessage::getCustomerId));
+                .addRule(new NotBlankRule<>("customerId", "Mã khách không được trống", CartRawMessage::getCustomerId))
+                .addRule(new CollectionMinSizeRule<>("items", 1, "Giỏ hàng phải có ít nhất 1 sản phẩm", CartRawMessage::getItems));
     }
 
     private DataQualityRuleChain<InvoiceRawMessage> buildInvoiceRules() {
