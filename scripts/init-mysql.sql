@@ -228,6 +228,7 @@ CREATE TABLE stg_books (
   price DECIMAL(12,2) NOT NULL,
   free_flag BOOLEAN NOT NULL DEFAULT FALSE,
   released_at DATE,
+  status VARCHAR(20) DEFAULT 'HIEU_LUC',
   avg_rating DECIMAL(3,2),
   total_orders INT DEFAULT 0,
   quality_status ENUM('RAW','VALIDATED','REJECTED') DEFAULT 'RAW',
@@ -243,6 +244,7 @@ CREATE TABLE stg_customers (
   phone VARCHAR(20),
   roles VARCHAR(100),
   status VARCHAR(20) DEFAULT 'HOAT_DONG',
+  created_at TIMESTAMP NULL,
   quality_status ENUM('RAW','VALIDATED','REJECTED') DEFAULT 'RAW',
   quality_errors TEXT,
   loaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -310,6 +312,7 @@ CREATE TABLE stg_invoices (
   amount DECIMAL(12,2) NOT NULL,
   status ENUM('CHUA_TT','DA_TT') NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  due_at TIMESTAMP NULL,
   quality_status ENUM('RAW','VALIDATED','REJECTED') DEFAULT 'RAW',
   quality_errors TEXT,
   loaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
