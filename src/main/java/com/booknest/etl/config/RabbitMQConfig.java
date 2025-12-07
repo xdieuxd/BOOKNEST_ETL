@@ -280,6 +280,17 @@ public class RabbitMQConfig {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         factory.setMessageConverter(converter);
+        factory.setAutoStartup(true); 
+        factory.setConcurrentConsumers(3); 
+        factory.setMaxConcurrentConsumers(10);
+        
+        factory.setErrorHandler(t -> {
+            System.err.println("====== RABBITMQ LISTENER ERROR ======");
+            System.err.println("Error: " + t.getMessage());
+            t.printStackTrace();
+            System.err.println("=====================================");
+        });
+        
         return factory;
     }
 

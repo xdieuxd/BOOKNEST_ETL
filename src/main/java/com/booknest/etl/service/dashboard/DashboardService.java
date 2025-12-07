@@ -16,26 +16,58 @@ public class DashboardService {
     private final JdbcTemplate stagingJdbcTemplate;
 
     public DashboardSummary getSummary() {
-        long totalProcessed = count("SELECT COUNT(*) FROM staging_db.dq_result");
-        long passed = count("SELECT COUNT(*) FROM staging_db.dq_result WHERE status = 'PASSED'");
-        long fixed = count("SELECT COUNT(*) FROM staging_db.dq_result WHERE status = 'FIXED'");
-        long failed = count("SELECT COUNT(*) FROM staging_db.dq_result WHERE status = 'FAILED'");
         long stagingTotal = count("SELECT COALESCE(SUM(cnt),0) FROM (" +
                 "SELECT COUNT(*) cnt FROM staging_db.stg_books " +
-                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_users " +
+                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_customers " +
                 "UNION ALL SELECT COUNT(*) FROM staging_db.stg_orders " +
+                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_order_items " +
                 "UNION ALL SELECT COUNT(*) FROM staging_db.stg_carts " +
                 "UNION ALL SELECT COUNT(*) FROM staging_db.stg_invoices" +
                 ") AS s");
-        OffsetDateTime lastRun = stagingJdbcTemplate.queryForObject("SELECT MAX(finished_at) FROM staging_db.etl_log",
+        
+        long passed = count("SELECT COALESCE(SUM(cnt),0) FROM (" +
+                "SELECT COUNT(*) cnt FROM staging_db.stg_books WHERE quality_status = 'VALIDATED' " +
+                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_customers WHERE quality_status = 'VALIDATED' " +
+                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_orders WHERE quality_status = 'VALIDATED' " +
+                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_order_items WHERE quality_status = 'VALIDATED' " +
+                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_carts WHERE quality_status = 'VALIDATED' " +
+                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_invoices WHERE quality_status = 'VALIDATED'" +
+                ") AS s");
+        
+        long failed = count("SELECT COALESCE(SUM(cnt),0) FROM (" +
+                "SELECT COUNT(*) cnt FROM staging_db.stg_books WHERE quality_status = 'REJECTED' " +
+                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_customers WHERE quality_status = 'REJECTED' " +
+                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_orders WHERE quality_status = 'REJECTED' " +
+                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_order_items WHERE quality_status = 'REJECTED' " +
+                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_carts WHERE quality_status = 'REJECTED' " +
+                "UNION ALL SELECT COUNT(*) FROM staging_db.stg_invoices WHERE quality_status = 'REJECTED'" +
+                ") AS s");
+        
+        long fixed = 0;
+        
+        OffsetDateTime lastRun = null;
+        try {
+            lastRun = stagingJdbcTemplate.queryForObject(
+                "SELECT MAX(loaded_at) FROM (" +
+                    "SELECT MAX(loaded_at) loaded_at FROM staging_db.stg_books " +
+                    "UNION ALL SELECT MAX(loaded_at) FROM staging_db.stg_customers " +
+                    "UNION ALL SELECT MAX(loaded_at) FROM staging_db.stg_orders " +
+                    "UNION ALL SELECT MAX(loaded_at) FROM staging_db.stg_order_items " +
+                    "UNION ALL SELECT MAX(loaded_at) FROM staging_db.stg_carts " +
+                    "UNION ALL SELECT MAX(loaded_at) FROM staging_db.stg_invoices" +
+                ") AS t",
                 (rs, rowNum) -> {
                     if (rs.getTimestamp(1) == null) {
                         return null;
                     }
                     return rs.getTimestamp(1).toInstant().atOffset(OffsetDateTime.now().getOffset());
                 });
+        } catch (Exception e) {
+            lastRun = OffsetDateTime.now(); // Fallback to current time
+        }
+        
         return DashboardSummary.builder()
-            .totalProcessed(totalProcessed)
+            .totalProcessed(stagingTotal)
             .totalStaging(stagingTotal)
             .passed(passed)
             .fixed(fixed)

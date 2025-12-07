@@ -6,9 +6,6 @@ export default function SummaryCard({ summary }) {
     <div className="summary-card card">
       <div className="summary-header">
         <h2>Bảng điều khiển ETL</h2>
-        <p className="muted">
-          Tổng quan trạng thái pipeline và kết quả kiểm tra dữ liệu
-        </p>
       </div>
 
       <div className="summary-grid">

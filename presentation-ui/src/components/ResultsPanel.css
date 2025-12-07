@@ -6,6 +6,19 @@
   margin-bottom: 32px;
 }
 
+.panel-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.panel-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
 .tabs {
   display: flex;
   gap: 12px;
@@ -69,12 +82,16 @@
   max-height: none;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .data-table {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
+  table-layout: auto;
 }
 
 .data-table th {
@@ -86,11 +103,17 @@
   border-bottom: 2px solid #e5e7eb;
   position: sticky;
   top: 0;
+  white-space: nowrap;
+  min-width: 100px;
 }
 
 .data-table td {
   padding: 12px;
   border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .data-table tr:hover {

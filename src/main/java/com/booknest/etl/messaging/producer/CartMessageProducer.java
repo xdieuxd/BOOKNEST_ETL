@@ -23,9 +23,9 @@ public class CartMessageProducer {
     public void sendToRaw(CartRawMessage message) {
         try {
             rabbitTemplate.convertAndSend(exchange, "cart.raw", message);
-            log.debug("📤 Sent cart {} to raw queue", message.getCartId());
+            log.debug("Sent cart {} to raw queue", message.getCartId());
         } catch (Exception e) {
-            log.error("❌ Failed to send cart {} to raw queue: {}", message.getCartId(), e.getMessage(), e);
+            log.error("Failed to send cart {} to raw queue: {}", message.getCartId(), e.getMessage(), e);
             throw new RuntimeException("Failed to send message to raw queue", e);
         }
     }
@@ -33,9 +33,9 @@ public class CartMessageProducer {
     public void sendToQuality(CartRawMessage message) {
         try {
             rabbitTemplate.convertAndSend(exchange, "cart.quality", message);
-            log.debug("📤 Sent cart {} to quality queue", message.getCartId());
+            log.debug("Sent cart {} to quality queue", message.getCartId());
         } catch (Exception e) {
-            log.error("❌ Failed to send cart {} to quality queue: {}", message.getCartId(), e.getMessage(), e);
+            log.error("Failed to send cart {} to quality queue: {}", message.getCartId(), e.getMessage(), e);
             throw new RuntimeException("Failed to send message to quality queue", e);
         }
     }
@@ -43,9 +43,9 @@ public class CartMessageProducer {
     public void sendToError(CartRawMessage message, String errorReason) {
         try {
             rabbitTemplate.convertAndSend(exchange, "cart.error", message);
-            log.warn("⚠️ Sent cart {} to error queue: {}", message.getCartId(), errorReason);
+            log.warn("Sent cart {} to error queue: {}", message.getCartId(), errorReason);
         } catch (Exception e) {
-            log.error("❌ Failed to send cart {} to error queue: {}", message.getCartId(), e.getMessage(), e);
+            log.error("Failed to send cart {} to error queue: {}", message.getCartId(), e.getMessage(), e);
         }
     }
 }

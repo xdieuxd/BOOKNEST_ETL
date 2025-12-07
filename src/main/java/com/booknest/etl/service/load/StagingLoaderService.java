@@ -46,7 +46,6 @@ public class StagingLoaderService {
     private final MessageConverter messageConverter;
     private final ObjectMapper objectMapper;
 
-    @RabbitListener(queues = "${etl.queues.quality}")
     public void consumeQualityMessage(Object payload) {
         OffsetDateTime start = OffsetDateTime.now();
         try {

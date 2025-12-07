@@ -23,9 +23,9 @@ public class InvoiceMessageProducer {
     public void sendToRaw(InvoiceRawMessage message) {
         try {
             rabbitTemplate.convertAndSend(exchange, "invoice.raw", message);
-            log.debug("📤 Sent invoice {} to raw queue", message.getInvoiceId());
+            log.debug("Sent invoice {} to raw queue", message.getInvoiceId());
         } catch (Exception e) {
-            log.error("❌ Failed to send invoice {} to raw queue: {}", message.getInvoiceId(), e.getMessage(), e);
+            log.error("Failed to send invoice {} to raw queue: {}", message.getInvoiceId(), e.getMessage(), e);
             throw new RuntimeException("Failed to send message to raw queue", e);
         }
     }
@@ -33,9 +33,9 @@ public class InvoiceMessageProducer {
     public void sendToQuality(InvoiceRawMessage message) {
         try {
             rabbitTemplate.convertAndSend(exchange, "invoice.quality", message);
-            log.debug("📤 Sent invoice {} to quality queue", message.getInvoiceId());
+            log.debug("Sent invoice {} to quality queue", message.getInvoiceId());
         } catch (Exception e) {
-            log.error("❌ Failed to send invoice {} to quality queue: {}", message.getInvoiceId(), e.getMessage(), e);
+            log.error("Failed to send invoice {} to quality queue: {}", message.getInvoiceId(), e.getMessage(), e);
             throw new RuntimeException("Failed to send message to quality queue", e);
         }
     }
@@ -43,9 +43,9 @@ public class InvoiceMessageProducer {
     public void sendToError(InvoiceRawMessage message, String errorReason) {
         try {
             rabbitTemplate.convertAndSend(exchange, "invoice.error", message);
-            log.warn("⚠️ Sent invoice {} to error queue: {}", message.getInvoiceId(), errorReason);
+            log.warn("Sent invoice {} to error queue: {}", message.getInvoiceId(), errorReason);
         } catch (Exception e) {
-            log.error("❌ Failed to send invoice {} to error queue: {}", message.getInvoiceId(), e.getMessage(), e);
+            log.error("Failed to send invoice {} to error queue: {}", message.getInvoiceId(), e.getMessage(), e);
         }
     }
 }

@@ -38,9 +38,10 @@ public class InvoiceJdbcRepository {
                 .orderId(String.valueOf(rs.getInt("ma_don_hang")))
                 .amount(rs.getBigDecimal("so_tien"))
                 .status(rs.getString("trang_thai_thanh_toan"))
-                .createdAt(rs.getTimestamp("ngay_tao") != null
+                .issuedAt(rs.getTimestamp("ngay_tao") != null
                         ? rs.getTimestamp("ngay_tao").toInstant().atOffset(OffsetDateTime.now().getOffset())
                         : null)
+                .dueAt(null) 
                 .source("source_db")
                 .extractedAt(OffsetDateTime.now())
                 .build();

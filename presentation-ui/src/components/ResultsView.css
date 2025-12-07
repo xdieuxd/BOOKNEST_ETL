@@ -1,5 +1,7 @@
 .results-view {
   padding: 16px;
+  max-width: 100%;
+  width: 100%;
 }
 .top-area {
   margin-bottom: 16px;
@@ -15,4 +17,6 @@
 }
 .results-panel-area {
   margin-top: 18px;
+  width: 100%;
+  max-width: 100%;
 }

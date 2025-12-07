@@ -3,19 +3,29 @@
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
   padding: 8px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
 }
 .panel-header h3 {
   margin: 0 0 8px 0;
 }
-.panel-body table {
+.panel-body {
+  overflow-x: auto;
   width: 100%;
+}
+.panel-body table {
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
+  table-layout: auto;
 }
 .panel-body th,
 .panel-body td {
   padding: 8px 10px;
   border-bottom: 1px solid #eee;
   text-align: left;
+  white-space: nowrap;
 }
 .panel-success {
   border-left: 4px solid #2ecc71;

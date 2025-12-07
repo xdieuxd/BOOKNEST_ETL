@@ -21,22 +21,68 @@ import com.booknest.etl.dto.InvoiceRawMessage;
 public class TransformService {
 
     public BookRawMessage transformBook(BookRawMessage input) {
+        // Transform empty title to "Unknown"
+        String title = input.getTitle() == null || input.getTitle().trim().isEmpty() 
+            ? "Unknown" 
+            : capitalizeFirstLetter(input.getTitle());
+        
+        // Transform empty description to "N/A"
+        String description = input.getDescription() == null || input.getDescription().trim().isEmpty()
+            ? "N/A"
+            : trim(input.getDescription());
+        
+        // Transform empty authors to ["Unknown"]
+        List<String> authors = input.getAuthors() == null || input.getAuthors().isEmpty()
+            ? List.of("Unknown")
+            : input.getAuthors().stream()
+                .map(a -> a == null || a.trim().isEmpty() ? "Unknown" : normalizePersonName(a))
+                .collect(Collectors.toList());
+        
+        // Transform empty categories to ["Uncategorized"]
+        List<String> categories = input.getCategories() == null || input.getCategories().isEmpty()
+            ? List.of("Uncategorized")
+            : input.getCategories().stream()
+                .map(c -> c == null || c.trim().isEmpty() ? "Uncategorized" : trim(c))
+                .collect(Collectors.toList());
+        
         return input.toBuilder()
-                .title(capitalizeFirstLetter(input.getTitle()))  // Viết hoa chữ cái đầu tiên
-                .description(trim(input.getDescription()))
-                .authors(input.getAuthors().stream().map(this::normalizePersonName).collect(Collectors.toList()))  // Capitalize từng từ
-                .categories(input.getCategories().stream().map(this::trim).collect(Collectors.toList()))
+                .title(title)
+                .description(description)
+                .authors(authors)
+                .categories(categories)
                 .status(transformStatus(input.getStatus()))
                 .build();
     }
 
     public UserRawMessage transformUser(UserRawMessage input) {
+        // Transform empty fullName to "Unknown"
+        String fullName = input.getFullName() == null || input.getFullName().trim().isEmpty()
+            ? "Unknown"
+            : normalizePersonName(input.getFullName());
+        
+        // Transform empty email to "unknown@example.com"
+        String email = input.getEmail() == null || input.getEmail().trim().isEmpty()
+            ? "unknown@example.com"
+            : lowerCase(input.getEmail());
+        
+        // Transform empty phone to "N/A"
+        String phone = input.getPhone() == null || input.getPhone().trim().isEmpty()
+            ? "N/A"
+            : normalizePhone(input.getPhone());
+        
+        // Transform empty roles to ["guest"]
+        List<String> roles = input.getRoles() == null || input.getRoles().isEmpty()
+            ? List.of("guest")
+            : input.getRoles().stream()
+                .map(r -> r == null || r.trim().isEmpty() ? "guest" : r.trim())
+                .collect(Collectors.toList());
+        
         return input.toBuilder()
-                .fullName(normalizePersonName(input.getFullName()))  // Chuẩn hóa tên người: viết hoa chữ cái đầu
-                .email(lowerCase(input.getEmail()))
-                .phone(normalizePhone(input.getPhone()))
+                .fullName(fullName)
+                .email(email)
+                .phone(phone)
                 .status(transformStatus(input.getStatus()))
-                .roles(input.getRoles().stream().map(String::trim).collect(Collectors.toList()))
+                .roles(roles)
                 .build();
     }
 
@@ -48,9 +94,19 @@ public class TransformService {
                 .add(defaultValue(input.getShippingFee()))
                 .subtract(defaultValue(input.getDiscount()));
 
+        // Transform empty customerName to "Unknown Customer"
+        String customerName = input.getCustomerName() == null || input.getCustomerName().trim().isEmpty()
+            ? "Unknown Customer"
+            : normalizePersonName(input.getCustomerName());
+        
+        // Transform empty customerEmail to "unknown@example.com"
+        String customerEmail = input.getCustomerEmail() == null || input.getCustomerEmail().trim().isEmpty()
+            ? "unknown@example.com"
+            : lowerCase(input.getCustomerEmail());
+
         return input.toBuilder()
-                .customerName(normalizePersonName(input.getCustomerName()))  // Chuẩn hóa tên người: viết hoa chữ cái đầu
-                .customerEmail(lowerCase(input.getCustomerEmail()))
+                .customerName(customerName)
+                .customerEmail(customerEmail)
                 .totalAmount(total)
                 .items(input.getItems() == null ? input.getItems()
                         : input.getItems().stream().map(this::transformOrderItem).toList())
@@ -59,8 +115,12 @@ public class TransformService {
     }
 
     private OrderItemRawMessage transformOrderItem(OrderItemRawMessage item) {
+        String bookId = item.getBookId() == null || item.getBookId().trim().isEmpty()
+            ? "UNKNOWN"
+            : trim(item.getBookId());
+        
         return item.toBuilder()
-                .bookId(trim(item.getBookId()))
+                .bookId(bookId)
                 .build();
     }
 
@@ -69,22 +129,34 @@ public class TransformService {
     }
 
     public CartRawMessage transformCart(CartRawMessage input) {
+        String customerId = input.getCustomerId() == null || input.getCustomerId().trim().isEmpty()
+            ? "UNKNOWN"
+            : trim(input.getCustomerId());
+        
         return input.toBuilder()
-                .customerId(trim(input.getCustomerId()))
+                .customerId(customerId)
                 .items(input.getItems() == null ? List.of() :
                         input.getItems().stream().map(this::transformCartItem).toList())
                 .build();
     }
 
     private CartItemRawMessage transformCartItem(CartItemRawMessage item) {
+        String bookId = item.getBookId() == null || item.getBookId().trim().isEmpty()
+            ? "UNKNOWN"
+            : trim(item.getBookId());
+        
         return item.toBuilder()
-                .bookId(trim(item.getBookId()))
+                .bookId(bookId)
                 .build();
     }
 
     public InvoiceRawMessage transformInvoice(InvoiceRawMessage invoice) {
+        String orderId = invoice.getOrderId() == null || invoice.getOrderId().trim().isEmpty()
+            ? "UNKNOWN"
+            : trim(invoice.getOrderId());
+        
         return invoice.toBuilder()
-                .orderId(trim(invoice.getOrderId()))
+                .orderId(orderId)
                 .status(transformStatus(invoice.getStatus()))
                 .build();
     }
@@ -167,5 +239,25 @@ public class TransformService {
 
     private BigDecimal defaultValue(BigDecimal value) {
         return value == null ? BigDecimal.ZERO : value;
+    }
+
+    /**
+     * Transform empty/null string fields to "Unknown" for better presentation
+     */
+    private String toUnknownIfEmpty(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return "Unknown";
+        }
+        return value.trim();
+    }
+
+    /**
+     * Transform empty/null string fields to "N/A" for optional fields
+     */
+    private String toNAIfEmpty(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return "N/A";
+        }
+        return value.trim();
     }
 }

@@ -23,9 +23,9 @@ public class OrderMessageProducer {
     public void sendToRaw(OrderRawMessage message) {
         try {
             rabbitTemplate.convertAndSend(exchange, "order.raw", message);
-            log.debug("📤 Sent order {} to raw queue", message.getOrderId());
+            log.debug("Sent order {} to raw queue", message.getOrderId());
         } catch (Exception e) {
-            log.error("❌ Failed to send order {} to raw queue: {}", message.getOrderId(), e.getMessage(), e);
+            log.error("Failed to send order {} to raw queue: {}", message.getOrderId(), e.getMessage(), e);
             throw new RuntimeException("Failed to send message to raw queue", e);
         }
     }
@@ -33,9 +33,9 @@ public class OrderMessageProducer {
     public void sendToQuality(OrderRawMessage message) {
         try {
             rabbitTemplate.convertAndSend(exchange, "order.quality", message);
-            log.debug("📤 Sent order {} to quality queue", message.getOrderId());
+            log.debug("Sent order {} to quality queue", message.getOrderId());
         } catch (Exception e) {
-            log.error("❌ Failed to send order {} to quality queue: {}", message.getOrderId(), e.getMessage(), e);
+            log.error("Failed to send order {} to quality queue: {}", message.getOrderId(), e.getMessage(), e);
             throw new RuntimeException("Failed to send message to quality queue", e);
         }
     }
@@ -43,9 +43,9 @@ public class OrderMessageProducer {
     public void sendToError(OrderRawMessage message, String errorReason) {
         try {
             rabbitTemplate.convertAndSend(exchange, "order.error", message);
-            log.warn("⚠️ Sent order {} to error queue: {}", message.getOrderId(), errorReason);
+            log.warn("Sent order {} to error queue: {}", message.getOrderId(), errorReason);
         } catch (Exception e) {
-            log.error("❌ Failed to send order {} to error queue: {}", message.getOrderId(), e.getMessage(), e);
+            log.error("Failed to send order {} to error queue: {}", message.getOrderId(), e.getMessage(), e);
         }
     }
 }

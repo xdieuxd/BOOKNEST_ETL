@@ -25,14 +25,8 @@ import com.booknest.etl.staging.StagingCustomerRepository;
 
 import lombok.RequiredArgsConstructor;
 
-/**
- * Consumes validated raw messages from the quality queue.
- * Transforms, saves to staging_db, and loads into source_db (production).
- * 
- * Flow: RabbitMQ quality queue → Transform → staging_db → source_db
- */
+
 @Component
-@RabbitListener(queues = "${etl.queues.quality}")
 @RequiredArgsConstructor
 public class QualityMessageConsumer {
 
@@ -57,12 +51,12 @@ public class QualityMessageConsumer {
             log.debug("Saving validated customer {} to staging_db", transformed.getUserId());
             stagingCustomerRepository.upsert(transformed, DataQualityStatus.VALIDATED, null);
             
-            // Load to source_db immediately (can be batched later for performance)
+            // Load to source_db immediately 
             sourceDbLoaderService.loadCustomersToSource();
             
-            log.info("✅ Customer {} processed: quality queue → transform → staging → source_db", transformed.getUserId());
+            log.info("Customer {} processed: quality queue → transform → staging → source_db", transformed.getUserId());
         } catch (Exception e) {
-            log.error("❌ Error processing customer {}: {}", rawCustomer.getUserId(), e.getMessage(), e);
+            log.error("Error processing customer {}: {}", rawCustomer.getUserId(), e.getMessage(), e);
         }
     }
 
@@ -78,9 +72,9 @@ public class QualityMessageConsumer {
             
             sourceDbLoaderService.loadBooksToSource();
             
-            log.info("✅ Book {} processed: quality queue → transform → staging → source_db", transformed.getBookId());
+            log.info("Book {} processed: quality queue → transform → staging → source_db", transformed.getBookId());
         } catch (Exception e) {
-            log.error("❌ Error processing book {}: {}", rawBook.getBookId(), e.getMessage(), e);
+            log.error("Error processing book {}: {}", rawBook.getBookId(), e.getMessage(), e);
         }
     }
 
@@ -96,9 +90,9 @@ public class QualityMessageConsumer {
             
             sourceDbLoaderService.loadOrdersToSource();
             
-            log.info("✅ Order {} processed: quality queue → transform → staging → source_db", transformed.getOrderId());
+            log.info("Order {} processed: quality queue → transform → staging → source_db", transformed.getOrderId());
         } catch (Exception e) {
-            log.error("❌ Error processing order {}: {}", rawOrder.getOrderId(), e.getMessage(), e);
+            log.error("Error processing order {}: {}", rawOrder.getOrderId(), e.getMessage(), e);
         }
     }
 
@@ -112,10 +106,10 @@ public class QualityMessageConsumer {
             log.debug("Saving validated cart {} to staging_db", transformed.getCartId());
             stagingCartRepository.upsert(transformed, DataQualityStatus.VALIDATED, null);
             
-            log.info("✅ Cart {} processed: quality queue → transform → staging_db", transformed.getCartId());
+            log.info("Cart {} processed: quality queue → transform → staging_db", transformed.getCartId());
             // TODO: Implement loadCartsToSource() when needed
         } catch (Exception e) {
-            log.error("❌ Error processing cart {}: {}", rawCart.getCartId(), e.getMessage(), e);
+            log.error("Error processing cart {}: {}", rawCart.getCartId(), e.getMessage(), e);
         }
     }
 
@@ -129,10 +123,10 @@ public class QualityMessageConsumer {
             log.debug("Saving validated invoice {} to staging_db", transformed.getInvoiceId());
             stagingInvoiceRepository.upsert(transformed, DataQualityStatus.VALIDATED, null);
             
-            log.info("✅ Invoice {} processed: quality queue → transform → staging_db", transformed.getInvoiceId());
+            log.info("Invoice {} processed: quality queue → transform → staging_db", transformed.getInvoiceId());
             // TODO: Implement loadInvoicesToSource() when needed
         } catch (Exception e) {
-            log.error("❌ Error processing invoice {}: {}", rawInvoice.getInvoiceId(), e.getMessage(), e);
+            log.error("Error processing invoice {}: {}", rawInvoice.getInvoiceId(), e.getMessage(), e);
         }
     }
 
@@ -144,13 +138,11 @@ public class QualityMessageConsumer {
             OrderItemRawMessage transformed = transformService.transformOrderItemPublic(rawOrderItem);
             
             log.debug("Saving validated order item (book={}) to staging_db", transformed.getBookId());
-            // Note: Order items are saved as part of order processing, not individually
-            // stagingOrderItemRepository.upsert() expects orderId which we don't have here
             
-            log.info("✅ Order item (book={}) processed: quality queue → transform → staging_db", transformed.getBookId());
+            log.info("Order item (book={}) processed: quality queue → transform → staging_db", transformed.getBookId());
             // Order items are typically loaded together with orders
         } catch (Exception e) {
-            log.error("❌ Error processing order item (book={}): {}", rawOrderItem.getBookId(), e.getMessage(), e);
+            log.error("Error processing order item (book={}): {}", rawOrderItem.getBookId(), e.getMessage(), e);
         }
     }
 }

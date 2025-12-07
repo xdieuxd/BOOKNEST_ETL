@@ -10,10 +10,6 @@ import com.booknest.etl.dto.BookRawMessage;
 
 import lombok.RequiredArgsConstructor;
 
-/**
- * Producer for Book messages.
- * Sends book data to entity-specific queues: raw → quality → errors
- */
 @Component
 @RequiredArgsConstructor
 public class BookMessageProducer {
@@ -25,41 +21,32 @@ public class BookMessageProducer {
     @Value("${etl.exchange}")
     private String exchange;
 
-    /**
-     * Send book to raw queue for validation
-     */
     public void sendToRaw(BookRawMessage message) {
         try {
             rabbitTemplate.convertAndSend(exchange, "book.raw", message);
-            log.debug("📤 Sent book {} to raw queue", message.getBookId());
+            log.debug("Sent book {} to raw queue", message.getBookId());
         } catch (Exception e) {
-            log.error("❌ Failed to send book {} to raw queue: {}", message.getBookId(), e.getMessage(), e);
+            log.error("Failed to send book {} to raw queue: {}", message.getBookId(), e.getMessage(), e);
             throw new RuntimeException("Failed to send message to raw queue", e);
         }
     }
 
-    /**
-     * Send validated book to quality queue for transform + load
-     */
     public void sendToQuality(BookRawMessage message) {
         try {
             rabbitTemplate.convertAndSend(exchange, "book.quality", message);
-            log.debug("📤 Sent book {} to quality queue", message.getBookId());
+            log.debug("Sent book {} to quality queue", message.getBookId());
         } catch (Exception e) {
-            log.error("❌ Failed to send book {} to quality queue: {}", message.getBookId(), e.getMessage(), e);
+            log.error("Failed to send book {} to quality queue: {}", message.getBookId(), e.getMessage(), e);
             throw new RuntimeException("Failed to send message to quality queue", e);
         }
     }
 
-    /**
-     * Send failed book to error queue
-     */
     public void sendToError(BookRawMessage message, String errorReason) {
         try {
             rabbitTemplate.convertAndSend(exchange, "book.error", message);
-            log.warn("⚠️ Sent book {} to error queue: {}", message.getBookId(), errorReason);
+            log.warn("Sent book {} to error queue: {}", message.getBookId(), errorReason);
         } catch (Exception e) {
-            log.error("❌ Failed to send book {} to error queue: {}", message.getBookId(), e.getMessage(), e);
+            log.error("Failed to send book {} to error queue: {}", message.getBookId(), e.getMessage(), e);
         }
     }
 }

@@ -11,6 +11,6 @@ CSV_BOOK_009,Sách phát hành tương lai,Tác giả Z,Khoa học,120000,2026-1
 CSV_BOOK_010,Sách miễn phí nhưng có giá,Tác giả A,Giáo dục,50000,2023-06-01,true,HIEU_LUC,Thông tin giá cần xem lại
 CSV_BOOK_011,Tên sách quá dài vượt quá 300 ký tự Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat Duis aute irure dolor in reprehenderit,Tác giả B,Khác,80000,2023-07-15,false,HIEU_LUC,Tên sách cần rút gọn
 CSV_BOOK_012,Sách miễn phí,Tác giả C,Công nghệ,0,2023-08-01,true,HIEU_LUC,Tài liệu miễn phí cho cộng đồng
-CSV_BOOK_013,Lập trình Python nâng cao,Nguyễn Văn A|Trần Thị B,Công nghệ|Lập trình,250000,2024-01-15,false,HIEU_LUC,Sách chuyên sâu về Python
+CSV_BOOK_013,Lập trình Python nâng cao,Nguyễn Văn Anh,Công nghệ,250000,2024-01-15,false,HIEU_LUC,Sách chuyên sâu về Python
 CSV_BOOK_014,Sách bị ẩn,Tác giả D,Tâm lý,100000,2024-02-20,false,AN,Sách tạm thời không hiển thị
 CSV_BOOK_015,Sách không có trạng thái,Tác giả E,Khác,85000,2024-03-01,false,,Thiếu thông tin trạng thái

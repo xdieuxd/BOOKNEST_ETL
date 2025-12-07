@@ -19,7 +19,7 @@ public class ErrorMessageListener {
 
     private final EtlLogRepository etlLogRepository;
 
-    @RabbitListener(queues = "${etl.queues.error}")
+
     public void consumeError(EtlResultDto result) {
         log.warn("Error result received for entity {}:{} -> {}", result.getEntityType(), result.getEntityKey(), result.getErrors());
         etlLogRepository.save(EtlLog.builder()

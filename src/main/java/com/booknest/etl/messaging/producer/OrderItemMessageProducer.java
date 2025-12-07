@@ -23,9 +23,9 @@ public class OrderItemMessageProducer {
     public void sendToRaw(OrderItemRawMessage message) {
         try {
             rabbitTemplate.convertAndSend(exchange, "orderitem.raw", message);
-            log.debug("📤 Sent order item (book={}) to raw queue", message.getBookId());
+            log.debug("Sent order item (book={}) to raw queue", message.getBookId());
         } catch (Exception e) {
-            log.error("❌ Failed to send order item to raw queue: {}", e.getMessage(), e);
+            log.error("Failed to send order item to raw queue: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to send message to raw queue", e);
         }
     }
@@ -33,9 +33,9 @@ public class OrderItemMessageProducer {
     public void sendToQuality(OrderItemRawMessage message) {
         try {
             rabbitTemplate.convertAndSend(exchange, "orderitem.quality", message);
-            log.debug("📤 Sent order item (book={}) to quality queue", message.getBookId());
+            log.debug("Sent order item (book={}) to quality queue", message.getBookId());
         } catch (Exception e) {
-            log.error("❌ Failed to send order item to quality queue: {}", e.getMessage(), e);
+            log.error("Failed to send order item to quality queue: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to send message to quality queue", e);
         }
     }
@@ -43,9 +43,9 @@ public class OrderItemMessageProducer {
     public void sendToError(OrderItemRawMessage message, String errorReason) {
         try {
             rabbitTemplate.convertAndSend(exchange, "orderitem.error", message);
-            log.warn("⚠️ Sent order item to error queue: {}", errorReason);
+            log.warn("Sent order item to error queue: {}", errorReason);
         } catch (Exception e) {
-            log.error("❌ Failed to send order item to error queue: {}", e.getMessage(), e);
+            log.error("Failed to send order item to error queue: {}", e.getMessage(), e);
         }
     }
 }

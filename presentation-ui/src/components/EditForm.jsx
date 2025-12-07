@@ -28,7 +28,6 @@ const EditForm = React.forwardRef(
       console.log("[DEBUG] Nhấn Lưu Sửa");
       const source = editingData || {};
       let payload = { ...source, ...localValues };
-      // Nếu trường lỗi là email, đảm bảo cả hai key đều có trong payload
       if (payload.customer_email) {
         payload.email = payload.customer_email;
       } else if (payload.email) {

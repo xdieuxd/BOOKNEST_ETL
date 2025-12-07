@@ -110,6 +110,7 @@ CREATE TABLE chi_tiet_gio_hang (
 CREATE TABLE don_hang (
   ma_don_hang INT AUTO_INCREMENT PRIMARY KEY,
   ma_nguoi_dung INT NOT NULL,
+  external_order_id VARCHAR(100) CHARACTER SET utf8mb4,
   trang_thai ENUM('TAO_MOI','CHO_THANH_TOAN','DA_THANH_TOAN','DANG_GIAO','DA_NHAN','DA_HUY','HOAN_TIEN') NOT NULL DEFAULT 'TAO_MOI',
   phuong_thuc_thanh_toan ENUM('ONLINE','COD') NOT NULL,
   tien_hang DECIMAL(12,2) NOT NULL,
@@ -123,6 +124,7 @@ CREATE TABLE don_hang (
   ma_tham_chieu_thanh_toan VARCHAR(100),
   ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   ngay_cap_nhat TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_dh_external_id (external_order_id),
   UNIQUE KEY uq_dh_tham_chieu (ma_tham_chieu_thanh_toan),
   INDEX idx_dh_user_ngay (ma_nguoi_dung, ngay_tao),
   INDEX idx_dh_trang_thai_ngay (trang_thai, ngay_tao),
@@ -272,7 +274,6 @@ CREATE TABLE stg_orders (
 );
 
 CREATE TABLE stg_order_items (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
   order_key VARCHAR(50) NOT NULL,
   book_key VARCHAR(50) NOT NULL,
   quantity INT NOT NULL,
@@ -280,7 +281,8 @@ CREATE TABLE stg_order_items (
   line_amount DECIMAL(12,2) GENERATED ALWAYS AS (quantity * unit_price) STORED,
   quality_status ENUM('RAW','VALIDATED','REJECTED') DEFAULT 'RAW',
   quality_errors TEXT,
-  loaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  loaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (order_key, book_key),
   INDEX idx_items_order (order_key),
   INDEX idx_items_book (book_key)
 );
@@ -311,7 +313,7 @@ CREATE TABLE stg_invoices (
   order_key VARCHAR(50) NOT NULL,
   amount DECIMAL(12,2) NOT NULL,
   status ENUM('CHUA_TT','DA_TT') NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   due_at TIMESTAMP NULL,
   quality_status ENUM('RAW','VALIDATED','REJECTED') DEFAULT 'RAW',
   quality_errors TEXT,

@@ -13,7 +13,8 @@ public class InvoiceRawMessage {
     String orderId;
     BigDecimal amount;
     String status;
-    OffsetDateTime createdAt;
+    OffsetDateTime issuedAt;
+    OffsetDateTime dueAt;
     String source;
     OffsetDateTime extractedAt;
 }

@@ -1,164 +1,36 @@
-import React, {
-  Fragment,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-} from "react";
+import React, { Fragment, useState, useRef } from "react";
 import axios from "axios";
-import EditForm from "./EditForm";
 import "./ResultsPanel.css";
 
-export default function ResultsPanel({ state, onReprocess }) {
+export default function ResultsPanel({ state, onRefresh, activeEntity }) {
   const [activeTab, setActiveTab] = useState("transformed");
-  const [editingRowId, setEditingRowId] = useState(null);
-  const [editingData, setEditingData] = useState({});
-  const [editingRowErrors, setEditingRowErrors] = useState([]);
+
+  // Get data for active entity only
+  const getTransformedData = () => {
+    if (state?.results?.byEntity?.transformed && activeEntity) {
+      return state.results.byEntity.transformed[activeEntity] || [];
+    }
+    return state?.results?.transformed || [];
+  };
+
+  const getErrorsData = () => {
+    if (state?.results?.byEntity?.errors && activeEntity) {
+      return state.results.byEntity.errors[activeEntity] || [];
+    }
+    return state?.results?.errors || [];
+  };
 
   const [localTransformed, setLocalTransformed] = useState(
-    state?.results?.transformed || []
+    getTransformedData()
   );
-  const [localErrors, setLocalErrors] = useState(state?.results?.errors || []);
+  const [localErrors, setLocalErrors] = useState(getErrorsData());
 
-  const scrollPositionRef = useRef(0);
   const tableWrapperRef = useRef(null);
 
   React.useEffect(() => {
-    setLocalTransformed(state?.results?.transformed || []);
-    setLocalErrors(state?.results?.errors || []);
-  }, [state?.results]);
-
-  const saveScrollPosition = useCallback(() => {
-    if (tableWrapperRef.current) {
-      scrollPositionRef.current = tableWrapperRef.current.scrollTop;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (editingRowId && tableWrapperRef.current) {
-      const timer = setTimeout(() => {
-        tableWrapperRef.current.scrollTop = scrollPositionRef.current;
-      }, 0);
-      return () => clearTimeout(timer);
-    }
-  }, [editingRowId, localErrors, localTransformed]);
-
-  const handleEditStart = useCallback(
-    (rowId, rowData) => {
-      saveScrollPosition();
-      setEditingRowId(rowId);
-      const cloned = {};
-      Object.keys(rowData || {}).forEach((k) => {
-        const v = rowData[k];
-        if (!k.startsWith("_")) {
-          cloned[k] = v === null || v === undefined ? "" : String(v);
-        }
-      });
-      setEditingData(cloned);
-      setEditingRowErrors(rowData._errors || []);
-    },
-    [saveScrollPosition]
-  );
-
-  const handleEditChange = useCallback((field, value) => {
-    setEditingData((prev) => ({ ...prev, [field]: value }));
-  }, []);
-
-  const isValidEmail = (email) => {
-    if (!email || email.trim() === "") return false;
-    const emailRegex = /^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/;
-    return emailRegex.test(email);
-  };
-
-  const isValidPrice = (price) => {
-    if (!price || price.trim() === "") return true;
-    const priceRegex = /^[0-9]+(\.[0-9]{1,2})?$/;
-    return priceRegex.test(price);
-  };
-
-  const isValidFullName = (name) => {
-    return name && name.trim() !== "";
-  };
-
-  const handleSave = async () => {
-    saveScrollPosition();
-    for (const err of editingRowErrors) {
-      const field = err.field;
-      const value = editingData[field] || "";
-
-      if (field === "full_name" || field === "fullName") {
-        if (!isValidFullName(value)) {
-          alert(`Trường "${field}" không được để trống`);
-          return;
-        }
-      } else if (field === "email") {
-        if (!isValidEmail(value)) {
-          alert(`Email "${value}" không hợp lệ. Định dạng: user@gmail.com`);
-          return;
-        }
-      } else if (field === "price") {
-        if (!isValidPrice(value)) {
-          alert(`Giá "${value}" không hợp lệ. Định dạng: 45000 hoặc 45000.50`);
-          return;
-        }
-      } else if (field === "title" || field === "description") {
-        if (value.length > 300) {
-          alert(`Trường "${field}" vượt quá 300 ký tự!`);
-          return;
-        }
-      } else if (field === "authors") {
-        // Không chuẩn hóa - để backend xử lý
-        editingData[field] = value;
-      }
-    }
-
-    // Call reprocess with edited data
-    try {
-      const response = await axios.post("/api/etl/reprocess", editingData);
-      const { results } = response.data;
-
-      // Find current error row index
-      const errorRowIndex = localErrors.findIndex(
-        (row) =>
-          (row.id || row.book_id || row.customer_id || row.customerId) ===
-          editingRowId
-      );
-
-      if (errorRowIndex >= 0) {
-        if (results.transformed.length > 0) {
-          // Row is now fixed - move to transformed list
-          const fixedRow = results.transformed[0];
-          setLocalTransformed((prev) => [...prev, fixedRow]);
-          setLocalErrors((prev) => prev.filter((_, i) => i !== errorRowIndex));
-          setEditingRowId(null);
-          setEditingData({});
-          setEditingRowErrors([]);
-          alert("Sửa thành công!");
-        } else if (results.errors.length > 0) {
-          // Row still has errors - update local errors with remaining ones
-          const updatedErrorRow = results.errors[0];
-          setLocalErrors((prev) => {
-            const newErrors = [...prev];
-            newErrors[errorRowIndex] = updatedErrorRow;
-            return newErrors;
-          });
-
-          // Update editing state to show remaining errors
-          setEditingRowErrors(updatedErrorRow._errors || []);
-          alert("Còn lỗi.");
-        }
-      }
-    } catch (err) {
-      console.error("Lỗi khi gọi reprocess:", err);
-      alert("Có lỗi xảy ra khi xử lý lại dữ liệu");
-    }
-  };
-
-  const handleCancel = useCallback(() => {
-    setEditingRowId(null);
-    setEditingData({});
-    setEditingRowErrors([]);
-  }, []);
+    setLocalTransformed(getTransformedData());
+    setLocalErrors(getErrorsData());
+  }, [state?.results, activeEntity]);
 
   const DataTable = ({ data, isErrors }) => {
     if (!data || data.length === 0) {
@@ -168,7 +40,13 @@ export default function ResultsPanel({ state, onReprocess }) {
     // Exclude _errors and _original_* columns from display columns
     const columns = data[0]
       ? Object.keys(data[0])
-          .filter((k) => k !== "_errors" && !k.startsWith("_original_"))
+          .filter(
+            (k) =>
+              k !== "_errors" &&
+              !k.startsWith("_original_") &&
+              k !== "_status" &&
+              k !== "_error_message"
+          )
           .slice(0, 6)
       : [];
 
@@ -183,7 +61,7 @@ export default function ResultsPanel({ state, onReprocess }) {
                 <th key={col}>{col.replace(/_/g, " ").toUpperCase()}</th>
               ))}
               {isErrors && <th>Lỗi Validation</th>}
-              {isErrors && <th>Hành Động</th>}
+              <th>Trạng Thái</th>
             </tr>
           </thead>
           <tbody>
@@ -194,7 +72,6 @@ export default function ResultsPanel({ state, onReprocess }) {
                 row.customer_id ||
                 row.customerId ||
                 idx;
-              const isEditing = editingRowId === rowId;
 
               return (
                 <Fragment key={`row-${rowId}-${idx}`}>
@@ -252,86 +129,27 @@ export default function ResultsPanel({ state, onReprocess }) {
                       </td>
                     )}
 
-                    {isErrors && (
-                      <td className="action-cell">
-                        {!isEditing && (
-                          <button
-                            className="btn-edit"
-                            onClick={() => handleEditStart(rowId, row)}
-                          >
-                            Sửa
-                          </button>
-                        )}
-                      </td>
-                    )}
+                    <td className="status-cell">
+                      {row._status === "SENT_TO_RABBITMQ" && (
+                        <span className="status-badge processing">
+                          ⏳ Processing...
+                        </span>
+                      )}
+                      {row._status === "PARSE_ERROR" && (
+                        <span className="status-badge error">
+                          ❌ Parse Error
+                        </span>
+                      )}
+                      {!row._status && isErrors && (
+                        <span className="status-badge error">
+                          ❌ Validation Failed
+                        </span>
+                      )}
+                      {!row._status && !isErrors && (
+                        <span className="status-badge success">✅ Success</span>
+                      )}
+                    </td>
                   </tr>
-
-                  {isEditing && isErrors && (
-                    <tr className="edit-form-row" key={`edit-${rowId}`}>
-                      <td
-                        colSpan={columns.length + 2}
-                        className="edit-form-cell"
-                      >
-                        <EditForm
-                          rowId={rowId}
-                          errors={editingRowErrors}
-                          editingData={editingData}
-                          onResult={(results) => {
-                            // Tìm index theo rowId thay vì editingRowId
-                            const errorRowIndex = localErrors.findIndex(
-                              (row) =>
-                                (row.id ||
-                                  row.book_id ||
-                                  row.customer_id ||
-                                  row.customerId) === rowId
-                            );
-                            if (errorRowIndex >= 0) {
-                              if (
-                                results.transformed &&
-                                results.transformed.length > 0
-                              ) {
-                                const fixedRow = results.transformed[0];
-                                setLocalTransformed((prev) => [
-                                  ...prev,
-                                  fixedRow,
-                                ]);
-                                setLocalErrors((prev) =>
-                                  prev.filter((_, i) => i !== errorRowIndex)
-                                );
-                                setEditingRowId(null);
-                                setEditingData({});
-                                setEditingRowErrors([]);
-                                alert("Sửa thành công!");
-                              } else if (
-                                results.errors &&
-                                results.errors.length > 0
-                              ) {
-                                const updatedErrorRow = results.errors[0];
-                                setLocalErrors((prev) => {
-                                  const newErrors = [...prev];
-                                  newErrors[errorRowIndex] = updatedErrorRow;
-                                  return newErrors;
-                                });
-                                setEditingRowErrors(
-                                  updatedErrorRow._errors || []
-                                );
-                                alert("Còn lỗi.");
-                              }
-                            } else {
-                              // Nếu không tìm thấy index, cập nhật lại toàn bộ bảng từ kết quả trả về
-                              setLocalTransformed(results.transformed || []);
-                              setLocalErrors(results.errors || []);
-                              setEditingRowId(null);
-                              setEditingData({});
-                              setEditingRowErrors([]);
-                              alert("Sửa thành công!");
-                            }
-                          }}
-                          onCancel={handleCancel}
-                        />
-                      </td>
-                    </tr>
-                  )}
                 </Fragment>
               );
             })}
@@ -370,8 +188,35 @@ export default function ResultsPanel({ state, onReprocess }) {
     );
   };
 
+  const entityLabels = {
+    books: "📚 Sách",
+    customers: "👤 Khách hàng",
+    orders: "🛒 Đơn hàng",
+    order_items: "📦 Chi tiết đơn",
+    carts: "🛍️ Giỏ hàng",
+    invoices: "🧾 Hóa đơn",
+  };
+
   return (
     <div className="results-panel">
+      <div className="panel-header">
+        <h3>📝 Xem Chi Tiết - {entityLabels[activeEntity] || activeEntity}</h3>
+        <button
+          className="btn-refresh"
+          onClick={onRefresh}
+          style={{
+            padding: "8px 16px",
+            background: "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "14px",
+          }}
+        >
+          🔄 Refresh Results from Staging DB
+        </button>
+      </div>
       <div className="tabs">
         <button
           className={`tab-btn ${activeTab === "transformed" ? "active" : ""}`}
@@ -420,13 +265,6 @@ export default function ResultsPanel({ state, onReprocess }) {
           className="btn-load-db"
           disabled={localErrors.length > 0}
           onClick={async () => {
-            if (editingRowId) {
-              alert(
-                "Vui lòng lưu các chỉnh sửa đang mở trước khi load vào DB."
-              );
-              return;
-            }
-
             if (
               !window.confirm(
                 "Xác nhận load dữ liệu vào database chính (source_db)?"
@@ -461,11 +299,6 @@ export default function ResultsPanel({ state, onReprocess }) {
           className="btn-export"
           disabled={localErrors.length > 0}
           onClick={async () => {
-            if (editingRowId) {
-              alert("Vui lòng lưu các chỉnh sửa đang mở trước khi tải xuống.");
-              return;
-            }
-
             const rows = [...localTransformed, ...localErrors];
 
             try {

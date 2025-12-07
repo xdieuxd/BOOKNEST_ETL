@@ -47,4 +47,55 @@ public class DashboardController {
                                                        @PathVariable String entityKey) {
         return ResponseEntity.ok(recordDetailService.getRecordDetail(entityType, entityKey));
     }
+
+    @GetMapping("/staging-results")
+    public ResponseEntity<Map<String, Object>> getStagingResults() {
+        DashboardSummary summary = dashboardService.getSummary();
+        Map<String, Object> rawByEntity = transformedDataService.getRawByEntity();
+        Map<String, Object> transformedByEntity = transformedDataService.getTransformedByEntity();
+        Map<String, Object> errorsByEntity = transformedDataService.getErrorsByEntity();
+        
+        // Build dqByEntity - count passed/failed per entity
+        Map<String, Map<String, Integer>> dqByEntity = new java.util.HashMap<>();
+        for (String entity : rawByEntity.keySet()) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> transformed = (List<Map<String, Object>>) transformedByEntity.get(entity);
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> errors = (List<Map<String, Object>>) errorsByEntity.get(entity);
+            
+            dqByEntity.put(entity, Map.of(
+                "passed", transformed != null ? transformed.size() : 0,
+                "failed", errors != null ? errors.size() : 0,
+                "fixable", 0
+            ));
+        }
+        
+        Map<String, Object> response = new java.util.HashMap<>();
+        response.put("extract", Map.of(
+            "totalRecords", summary.getTotalProcessed(),
+            "status", "COMPLETED"
+        ));
+        response.put("transform", Map.of(
+            "processed", summary.getPassed()
+        ));
+        response.put("load", Map.of(
+            "loaded", summary.getPassed()
+        ));
+        response.put("dq", Map.of(
+            "passed", summary.getPassed(),
+            "failed", summary.getFailed(),
+            "fixable", summary.getFixed()
+        ));
+        response.put("results", Map.of(
+            "byEntity", Map.of(
+                "raw", rawByEntity,
+                "transformed", transformedByEntity,
+                "errors", errorsByEntity
+            ),
+            "dqByEntity", dqByEntity
+        ));
+        response.put("tracingId", summary.getLastRun() != null ? summary.getLastRun().toString() : "N/A");
+        
+        return ResponseEntity.ok(response);
+    }
 }

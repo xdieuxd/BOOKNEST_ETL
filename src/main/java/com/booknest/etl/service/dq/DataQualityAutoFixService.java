@@ -85,7 +85,7 @@ public class DataQualityAutoFixService {
 
     public boolean isFixable(String errorRule) {
         if (errorRule == null) return false;
-        return errorRule.contains("BLANK")     // Có thể sửa bằng trim
+        return errorRule.contains("BLANK")    
                 || errorRule.contains("TRIM")
                 || errorRule.contains("LOWERCASE")
                 || errorRule.contains("UPPERCASE");

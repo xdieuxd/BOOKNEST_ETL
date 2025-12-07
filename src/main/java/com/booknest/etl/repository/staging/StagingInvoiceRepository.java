@@ -20,13 +20,14 @@ public class StagingInvoiceRepository {
 
     public void upsert(InvoiceRawMessage invoice, DataQualityStatus status, String errors) {
         String sql = """
-                INSERT INTO staging_db.stg_invoices (invoice_key, order_key, amount, status, created_at, quality_status, quality_errors, loaded_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+                INSERT INTO staging_db.stg_invoices (invoice_key, order_key, amount, status, issued_at, due_at, quality_status, quality_errors, loaded_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
                 ON DUPLICATE KEY UPDATE
                     order_key = VALUES(order_key),
                     amount = VALUES(amount),
                     status = VALUES(status),
-                    created_at = VALUES(created_at),
+                    issued_at = VALUES(issued_at),
+                    due_at = VALUES(due_at),
                     quality_status = VALUES(quality_status),
                     quality_errors = VALUES(quality_errors),
                     loaded_at = NOW()
@@ -36,9 +37,10 @@ public class StagingInvoiceRepository {
                 invoice.getOrderId(),
                 invoice.getAmount(),
                 invoice.getStatus(),
-                invoice.getCreatedAt(),
+                invoice.getIssuedAt(),
+                invoice.getDueAt(),
                 status != null ? status.value() : null,
                 errors
-        }, new int[]{Types.VARCHAR, Types.VARCHAR, Types.DECIMAL, Types.VARCHAR, Types.TIMESTAMP, Types.VARCHAR, Types.LONGVARCHAR});
+        }, new int[]{Types.VARCHAR, Types.VARCHAR, Types.DECIMAL, Types.VARCHAR, Types.TIMESTAMP, Types.TIMESTAMP, Types.VARCHAR, Types.LONGVARCHAR});
     }
 }

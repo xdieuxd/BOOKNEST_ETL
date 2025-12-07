@@ -2,6 +2,7 @@ package com.booknest.etl.service.load;
 
 import java.sql.Types;
 import java.util.List;
+import java.util.Map;
 import java.util.Arrays;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,9 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Service to load cleaned data from staging_db into source_db production tables
- */
+
 @Service
 @Slf4j
 public class SourceDbLoaderService {
@@ -29,9 +28,7 @@ public class SourceDbLoaderService {
         this.stagingJdbcTemplate = stagingJdbcTemplate;
     }
 
-    /**
-     * Load all validated customers from staging to source_db
-     */
+
     @Transactional
     public int loadCustomersToSource() {
         log.info("Loading validated customers from staging_db to source_db...");
@@ -56,7 +53,6 @@ public class SourceDbLoaderService {
         int loaded = 0;
         for (CustomerStaging customer : customers) {
             try {
-                // Insert/Update into nguoi_dung
                 String upsertUserSql = """
                         INSERT INTO source_db.nguoi_dung (ho_ten, email, sdt, mat_khau_hash, trang_thai, ngay_tao)
                         VALUES (?, ?, ?, 'default_hash', ?, NOW())
@@ -74,23 +70,19 @@ public class SourceDbLoaderService {
                         mapStatus(customer.status)
                 );
 
-                // Get user ID
                 Integer userId = sourceJdbcTemplate.queryForObject(
                         "SELECT ma_nguoi_dung FROM source_db.nguoi_dung WHERE email = ?",
                         Integer.class,
                         customer.email
                 );
 
-                // Handle roles (many-to-many)
                 if (customer.roles != null && !customer.roles.isEmpty() && userId != null) {
                     String[] roleNames = customer.roles.split("[,|]");
                     for (String roleName : roleNames) {
                         String trimmedRole = roleName.trim();
                         if (!trimmedRole.isEmpty()) {
-                            // Get or create role
                             Integer roleId = getOrCreateRole(trimmedRole);
                             if (roleId != null) {
-                                // Insert into nguoi_dung_vai_tro (ignore if exists)
                                 sourceJdbcTemplate.update(
                                         "INSERT IGNORE INTO source_db.nguoi_dung_vai_tro (ma_nguoi_dung, ma_vai_tro) VALUES (?, ?)",
                                         userId, roleId
@@ -110,9 +102,6 @@ public class SourceDbLoaderService {
         return loaded;
     }
 
-    /**
-     * Load all validated books from staging to source_db
-     */
     @Transactional
     public int loadBooksToSource() {
         log.info("Loading validated books from staging_db to source_db...");
@@ -139,7 +128,6 @@ public class SourceDbLoaderService {
         int loaded = 0;
         for (BookStaging book : books) {
             try {
-                // Insert/Update into sach
                 String upsertBookSql = """
                         INSERT INTO source_db.sach (ten_sach, mo_ta, gia_ban, mien_phi, ngay_phat_hanh, trang_thai)
                         VALUES (?, ?, ?, ?, ?, 'HIEU_LUC')
@@ -159,7 +147,6 @@ public class SourceDbLoaderService {
                         book.releasedAt
                 );
 
-                // Get book ID
                 Integer bookId = sourceJdbcTemplate.queryForObject(
                         "SELECT ma_sach FROM source_db.sach WHERE ten_sach = ? ORDER BY ma_sach DESC LIMIT 1",
                         Integer.class,
@@ -167,7 +154,6 @@ public class SourceDbLoaderService {
                 );
 
                 if (bookId != null) {
-                    // Handle authors (many-to-many)
                     if (book.authors != null && !book.authors.isEmpty()) {
                         String[] authorNames = book.authors.split("[,|]");
                         for (String authorName : authorNames) {
@@ -184,7 +170,6 @@ public class SourceDbLoaderService {
                         }
                     }
 
-                    // Handle categories (many-to-many)
                     if (book.categories != null && !book.categories.isEmpty()) {
                         String[] categoryNames = book.categories.split("[,|]");
                         for (String categoryName : categoryNames) {
@@ -212,9 +197,6 @@ public class SourceDbLoaderService {
         return loaded;
     }
 
-    /**
-     * Load all validated orders from staging to source_db
-     */
     @Transactional
     public int loadOrdersToSource() {
         log.info("Loading validated orders from staging_db to source_db...");
@@ -248,7 +230,6 @@ public class SourceDbLoaderService {
         int skipped = 0;
         for (OrderStaging order : orders) {
             try {
-                // Find user by customer_key (email)
                 Integer userId = null;
                 try {
                     userId = sourceJdbcTemplate.queryForObject(
@@ -257,7 +238,6 @@ public class SourceDbLoaderService {
                             order.customerKey
                     );
                 } catch (Exception e) {
-                    // Customer not found
                 }
 
                 if (userId == null) {
@@ -267,13 +247,12 @@ public class SourceDbLoaderService {
                     continue;
                 }
 
-                // Insert/Update into don_hang
                 String upsertOrderSql = """
-                        INSERT INTO source_db.don_hang (ma_nguoi_dung, trang_thai, phuong_thuc_thanh_toan,
+                        INSERT INTO source_db.don_hang (ma_nguoi_dung, external_order_id, trang_thai, phuong_thuc_thanh_toan,
                                                         tien_hang, giam_gia, phi_vc, tong_tien,
                                                         ten_nguoi_nhan, sdt_nguoi_nhan, dia_chi_nhan,
                                                         ma_tham_chieu_thanh_toan, ngay_tao)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ON DUPLICATE KEY UPDATE
                             trang_thai = VALUES(trang_thai),
                             tien_hang = VALUES(tien_hang),
@@ -285,6 +264,7 @@ public class SourceDbLoaderService {
 
                 sourceJdbcTemplate.update(upsertOrderSql,
                         userId,
+                        order.orderKey,
                         order.status,
                         order.paymentMethod,
                         order.subtotal,
@@ -305,9 +285,9 @@ public class SourceDbLoaderService {
         }
 
         if (skipped > 0) {
-            log.warn("⚠️ {} orders skipped due to missing customers. Upload customers first!", skipped);
+            log.warn("{} orders skipped due to missing customers. Upload customers first!", skipped);
         }
-        log.info("✅ Loaded {} orders to source_db ({} skipped)", loaded, skipped);
+        log.info("Loaded {} orders to source_db ({} skipped)", loaded, skipped);
         return loaded;
     }
 
@@ -319,7 +299,6 @@ public class SourceDbLoaderService {
                     roleName
             );
         } catch (Exception e) {
-            // Create new role
             sourceJdbcTemplate.update("INSERT INTO source_db.vai_tro (ten_vai_tro) VALUES (?)", roleName);
             return sourceJdbcTemplate.queryForObject(
                     "SELECT ma_vai_tro FROM source_db.vai_tro WHERE ten_vai_tro = ?",
@@ -369,7 +348,6 @@ public class SourceDbLoaderService {
                 ? "HOAT_DONG" : "KHOA";
     }
 
-    // Inner classes for staging data
     private static class CustomerStaging {
         String customerKey;
         String fullName;
@@ -405,4 +383,201 @@ public class SourceDbLoaderService {
         String paymentRef;
         java.sql.Timestamp orderDate;
     }
+
+
+    public int loadOrderItemsToSource() {
+        log.info("Loading validated order items from staging_db to source_db...");
+
+        String selectSql = """
+                SELECT order_key, book_key, quantity, unit_price
+                FROM staging_db.stg_order_items
+                WHERE quality_status = 'VALIDATED'
+                """;
+
+        List<Map<String, Object>> items = stagingJdbcTemplate.queryForList(selectSql);
+
+        int loaded = 0;
+        int skipped = 0;
+        for (Map<String, Object> item : items) {
+            try {
+                String orderKey = (String) item.get("order_key");
+                String bookKey = (String) item.get("book_key");
+                Integer quantity = (Integer) item.get("quantity");
+                java.math.BigDecimal unitPrice = (java.math.BigDecimal) item.get("unit_price");
+
+                Integer orderId = null;
+                try {
+                    orderId = sourceJdbcTemplate.queryForObject(
+                            "SELECT ma_don_hang FROM source_db.don_hang WHERE external_order_id = ? LIMIT 1",
+                            Integer.class,
+                            orderKey
+                    );
+                } catch (Exception e) {
+                    log.warn("Order item skipped: order '{}' not found in source_db", orderKey);
+                    skipped++;
+                    continue;
+                }
+                Integer bookId = null;
+                try {
+                    bookId = sourceJdbcTemplate.queryForObject(
+                            "SELECT ma_sach FROM source_db.sach WHERE ten_sach = ? LIMIT 1",
+                            Integer.class,
+                            bookKey
+                    );
+                } catch (Exception e) {
+                    log.warn("Order item skipped: book '{}' not found in source_db", bookKey);
+                    skipped++;
+                    continue;
+                }
+
+                String upsertSql = """
+                        INSERT INTO source_db.chi_tiet_don_hang (ma_don_hang, ma_sach, so_luong, don_gia)
+                        VALUES (?, ?, ?, ?)
+                        ON DUPLICATE KEY UPDATE
+                            so_luong = VALUES(so_luong),
+                            don_gia = VALUES(don_gia)
+                        """;
+
+                sourceJdbcTemplate.update(upsertSql, orderId, bookId, quantity, unitPrice);
+                loaded++;
+                
+            } catch (Exception e) {
+                log.error("Error loading order item: {}", e.getMessage());
+                skipped++;
+            }
+        }
+
+        if (skipped > 0) {
+            log.warn("{} order items skipped (order or book not found)", skipped);
+        }
+        log.info("Loaded {} order items to source_db ({} skipped)", loaded, skipped);
+        return loaded;
+    }
+
+    public int loadCartsToSource() {
+        log.info("Loading validated carts from staging_db to source_db...");
+
+        String selectSql = """
+                SELECT cart_key, customer_key, created_at
+                FROM staging_db.stg_carts
+                WHERE quality_status = 'VALIDATED'
+                """;
+
+        List<Map<String, Object>> carts = stagingJdbcTemplate.queryForList(selectSql);
+
+        int loaded = 0;
+        int skipped = 0;
+        for (Map<String, Object> cart : carts) {
+            try {
+                String cartKey = (String) cart.get("cart_key");
+                String customerKey = (String) cart.get("customer_key");
+                java.sql.Timestamp createdAt = (java.sql.Timestamp) cart.get("created_at");
+
+                Integer userId = null;
+                try {
+                    userId = sourceJdbcTemplate.queryForObject(
+                            "SELECT ma_nguoi_dung FROM source_db.nguoi_dung WHERE email = ? LIMIT 1",
+                            Integer.class,
+                            customerKey
+                    );
+                } catch (Exception e) {
+                    log.warn("Cart {} skipped: customer '{}' not found", cartKey, customerKey);
+                    skipped++;
+                    continue;
+                }
+
+                String upsertSql = """
+                        INSERT INTO source_db.gio_hang (ma_nguoi_dung, ngay_tao)
+                        VALUES (?, ?)
+                        ON DUPLICATE KEY UPDATE
+                            ngay_cap_nhat = NOW()
+                        """;
+
+                sourceJdbcTemplate.update(upsertSql, userId, createdAt);
+                loaded++;
+            } catch (Exception e) {
+                log.error("Error loading cart: {}", e.getMessage());
+            }
+        }
+
+        log.info("Loaded {} carts to source_db ({} skipped)", loaded, skipped);
+        return loaded;
+    }
+
+    public int loadInvoicesToSource() {
+        log.info("Loading validated invoices from staging_db to source_db...");
+
+        String selectSql = """
+                SELECT invoice_key, order_key, amount, status, issued_at, due_at
+                FROM staging_db.stg_invoices
+                WHERE quality_status = 'VALIDATED'
+                """;
+
+        List<Map<String, Object>> invoices = stagingJdbcTemplate.queryForList(selectSql);
+
+        int loaded = 0;
+        int skipped = 0;
+        for (Map<String, Object> invoice : invoices) {
+            try {
+                String invoiceKey = (String) invoice.get("invoice_key");
+                String orderKey = (String) invoice.get("order_key");
+                java.math.BigDecimal amount = (java.math.BigDecimal) invoice.get("amount");
+                if (amount == null) {
+                    amount = java.math.BigDecimal.ZERO;
+                }
+                String status = (String) invoice.get("status");
+                java.sql.Timestamp issuedAt = (java.sql.Timestamp) invoice.get("issued_at");
+                java.sql.Timestamp dueAt = (java.sql.Timestamp) invoice.get("due_at");
+
+                Integer orderId = null;
+                try {
+                    orderId = sourceJdbcTemplate.queryForObject(
+                            "SELECT ma_don_hang FROM source_db.don_hang WHERE external_order_id = ? LIMIT 1",
+                            Integer.class,
+                            orderKey
+                    );
+                } catch (Exception e) {
+                }
+
+                if (orderId == null) {
+                    log.warn("Invoice {} skipped: order '{}' not found in source_db", invoiceKey, orderKey);
+                    skipped++;
+                    continue;
+                }
+
+                String upsertSql = """
+                        INSERT INTO source_db.hoa_don (ma_don_hang, so_tien, trang_thai_thanh_toan, ngay_tao)
+                        VALUES (?, ?, ?, ?)
+                        ON DUPLICATE KEY UPDATE
+                            so_tien = VALUES(so_tien),
+                            trang_thai_thanh_toan = VALUES(trang_thai_thanh_toan)
+                        """;
+
+                java.sql.Timestamp createdAt = issuedAt != null ? issuedAt : new java.sql.Timestamp(System.currentTimeMillis());
+                String paymentStatus = mapInvoicePaymentStatus(status);
+
+                sourceJdbcTemplate.update(upsertSql, orderId, amount, paymentStatus, createdAt);
+                loaded++;
+            } catch (Exception e) {
+                log.error("Error loading invoice: {}", e.getMessage());
+                skipped++;
+            }
+        }
+
+        log.info("Loaded {} invoices to source_db ({} skipped)", loaded, skipped);
+        return loaded;
+    }
+
+    private String mapInvoicePaymentStatus(String status) {
+        if (status == null) return "CHUA_TT";
+        String normalized = status.trim().toUpperCase();
+        if (normalized.equals("PAID")
+                || normalized.equals("DA_THANH_TOAN")
+                || normalized.equals("REFUNDED")
+                || normalized.equals("DA_HOAN_TIEN")) {
+            return "DA_TT";
+        }
+        return "CHUA_TT";
+    }
+
 }

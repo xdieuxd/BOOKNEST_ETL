@@ -132,7 +132,6 @@ public class DataQualityService {
     }
 
     private void validateOrderItems(OrderRawMessage order, List<DqErrorDto> errors) {
-        // Skip items validation if list is empty (orders CSV may not include items - they're in separate order_items CSV)
         if (order.getItems() == null || order.getItems().isEmpty()) {
             return;
         }

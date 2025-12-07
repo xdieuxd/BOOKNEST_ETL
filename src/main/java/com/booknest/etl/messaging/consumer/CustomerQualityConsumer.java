@@ -14,10 +14,6 @@ import com.booknest.etl.staging.StagingCustomerRepository;
 
 import lombok.RequiredArgsConstructor;
 
-/**
- * Consumer for Customer QUALITY queue.
- * Transforms validated customers and loads to staging_db → source_db.
- */
 @Component
 @RequiredArgsConstructor
 public class CustomerQualityConsumer {
@@ -32,19 +28,19 @@ public class CustomerQualityConsumer {
     @Transactional
     public void handleCustomerQuality(UserRawMessage message) {
         try {
-            log.debug("📥 Received customer {} from quality queue", message.getUserId());
+            log.debug("Received customer {} from quality queue", message.getUserId());
 
             UserRawMessage transformed = transformService.transformUser(message);
             stagingCustomerRepository.upsert(transformed, DataQualityStatus.VALIDATED, null);
-            log.debug("💾 Saved customer {} to staging_db", transformed.getUserId());
+            log.debug("Saved customer {} to staging_db", transformed.getUserId());
 
             sourceDbLoaderService.loadCustomersToSource();
 
-            log.info("✅ Customer {} processed: quality queue → transform → staging → source_db", 
+            log.info("Customer {} processed: quality queue → transform → staging → source_db", 
                 transformed.getUserId());
 
         } catch (Exception e) {
-            log.error("❌ Error processing customer {} in quality queue: {}", 
+            log.error("Error processing customer {} in quality queue: {}", 
                 message.getUserId(), e.getMessage(), e);
         }
     }

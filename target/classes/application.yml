@@ -32,9 +32,30 @@ staging:
 etl:
   exchange: ${ETL_EXCHANGE:etl.exchange}
   queues:
-    raw: ${ETL_QUEUE_RAW:etl.raw}
-    quality: ${ETL_QUEUE_QUALITY:etl.quality}
-    error: ${ETL_QUEUE_ERROR:etl.errors}
+    # Book queues
+    book-raw: ${ETL_QUEUE_BOOK_RAW:etl.book.raw}
+    book-quality: ${ETL_QUEUE_BOOK_QUALITY:etl.book.quality}
+    book-error: ${ETL_QUEUE_BOOK_ERROR:etl.book.errors}
+    # Customer queues
+    customer-raw: ${ETL_QUEUE_CUSTOMER_RAW:etl.customer.raw}
+    customer-quality: ${ETL_QUEUE_CUSTOMER_QUALITY:etl.customer.quality}
+    customer-error: ${ETL_QUEUE_CUSTOMER_ERROR:etl.customer.errors}
+    # Order queues
+    order-raw: ${ETL_QUEUE_ORDER_RAW:etl.order.raw}
+    order-quality: ${ETL_QUEUE_ORDER_QUALITY:etl.order.quality}
+    order-error: ${ETL_QUEUE_ORDER_ERROR:etl.order.errors}
+    # Order Item queues
+    orderitem-raw: ${ETL_QUEUE_ORDERITEM_RAW:etl.orderitem.raw}
+    orderitem-quality: ${ETL_QUEUE_ORDERITEM_QUALITY:etl.orderitem.quality}
+    orderitem-error: ${ETL_QUEUE_ORDERITEM_ERROR:etl.orderitem.errors}
+    # Cart queues
+    cart-raw: ${ETL_QUEUE_CART_RAW:etl.cart.raw}
+    cart-quality: ${ETL_QUEUE_CART_QUALITY:etl.cart.quality}
+    cart-error: ${ETL_QUEUE_CART_ERROR:etl.cart.errors}
+    # Invoice queues
+    invoice-raw: ${ETL_QUEUE_INVOICE_RAW:etl.invoice.raw}
+    invoice-quality: ${ETL_QUEUE_INVOICE_QUALITY:etl.invoice.quality}
+    invoice-error: ${ETL_QUEUE_INVOICE_ERROR:etl.invoice.errors}
   extract:
     csv-location: classpath:data/source/*.csv
     schedule-fixed-delay: ${ETL_EXTRACT_DELAY:300000} # 5 minutes default
@@ -44,3 +65,8 @@ management:
     web:
       exposure:
         include: health,info,metrics
+
+logging:
+  level:
+    com.booknest.etl.messaging.consumer: INFO
+    org.springframework.amqp.rabbit: DEBUG
